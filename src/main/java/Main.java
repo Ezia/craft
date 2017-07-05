@@ -1,21 +1,26 @@
 import lwjglUI.ui.element.LwjglRectangle;
 import lwjglUI.ui.topObjects.LwjglLayer;
 import lwjglUI.ui.topObjects.LwjglWindow;
+import util.datastructure.AWTImage;
 import util.math.shape.shape2d.Rectangle;
 import util.math.Vector;
 
 public class Main {
 
     public static void main(String[] args) {
+
+        AWTImage img = new AWTImage("src/main/resources/test.png");
+        try {
+            img.load();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         Rectangle windowBox = new Rectangle(
                 new Vector(0., 0.),
                 new Vector(500., 500.)
         );
-
-//        LwjglRectangle UIRect = new LwjglRectangle(null, RGBColor.PURPLE, new Vector2D(1, 1));
-//
-//        LwjglLayer layer = new LwjglLayer();
-//        layer.setRootObject(UIRect);
 
         LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 1.));
 
