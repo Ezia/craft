@@ -39,10 +39,8 @@ public class AWTImage extends Image {
 		switch (format) {
 			case RGB:
 				return img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, 0);
-				break;
 			default:
 				throw new ImageException("Unsupported image format.");
 		}
-		return null;
 	}
 }

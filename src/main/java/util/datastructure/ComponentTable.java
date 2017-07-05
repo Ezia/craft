@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-public class ComponentTable<T extends Component> {
+public class ComponentTable<T> {
 
 	private Table<Component<T>> table;
 	private TreeSet<Component> components = new TreeSet<>();
