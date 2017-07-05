@@ -1,19 +1,19 @@
 package model.object.ingredient;
 
-import model.object.CraftObjectInstance;
+import model.object.CraftObject;
 
 /**
  * Created by esia on 05/07/17.
  */
-public class CraftIngredientInstance extends CraftObjectInstance<CraftIngredientType> {
+public class CraftIngredient extends CraftObject<CraftIngredientType> {
 	private int stack;
 
-	public CraftIngredientInstance(CraftIngredientType type, int stack) {
+	public CraftIngredient(CraftIngredientType type, int stack) {
 		super(type);
 		this.stack = stack;
 	}
 
-	public CraftIngredientInstance(CraftIngredientInstance instance) {
+	public CraftIngredient(CraftIngredient instance) {
 		this(instance.type, instance.stack);
 	}
 
