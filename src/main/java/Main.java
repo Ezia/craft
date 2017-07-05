@@ -22,9 +22,9 @@ public class Main {
                 new Vector(500., 500.)
         );
 
-        LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 0.5));
+        LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 0.1));
 
-        LwjglRectangle rec1 = new LwjglRectangle(new Vector(100., 100.), new Vector(0., 1., 1., 1.));
+        LwjglRectangle rec1 = new LwjglRectangle(new Vector(20., 100.), new Vector(0., 1., 1., 0.1));
 
 
         LwjglWindow win = new LwjglWindow(windowBox , "Craft");

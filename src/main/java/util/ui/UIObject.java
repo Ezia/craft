@@ -9,7 +9,7 @@ public abstract class UIObject {
 
 	abstract public Rectangle getLocalBoundingBox();
 
-	public Rectangle getBoundingBox() {
+	public Rectangle getGlobalBoundingBox() {
 		Rectangle localBox = getLocalBoundingBox();
 		return new Rectangle(transform.applyToPoint(localBox.pos),
 				transform.applyToPoint(localBox.diag));

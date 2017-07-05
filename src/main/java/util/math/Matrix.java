@@ -269,13 +269,14 @@ public class Matrix {
 	 * @return
 	 */
 	public static Matrix projection2D(Rectangle rect) {
-		Vector center = rect.pos.add(rect.diag.mult(1./2.));
-		double xScale = 1./(rect.diag.x()/2.);
-		double yScale = 1./(rect.diag.y()/2.);
+		Vector center = rect.pos;
+		double xScale = 1./(rect.diag.x());
+		double yScale = 1./(rect.diag.y());
 		Matrix mat = new Matrix(3, 3);
-		mat.set(0,0,xScale); 			 mat.set(0,1,0); 				  mat.set(0,2,0);
-		mat.set(1,0,0); 			  	 mat.set(1,1,yScale); 			  mat.set(1,2,0);
-		mat.set(2,0,-center.x()*xScale); mat.set(2,1,-center.y()*yScale); mat.set(2,2,1);
+
+		mat.set(0,0,xScale*2); mat.set(0,1,0); 		   mat.set(0,2,0);
+		mat.set(1,0,0); 	   mat.set(1,1,-yScale*2); mat.set(1,2,0);
+		mat.set(2,0,-1); 	   mat.set(2,1,1); 		   mat.set(2,2,1);
 		return mat;
 	}
 }

@@ -46,8 +46,8 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 				switch (prog.preset) {
 					case CRAFT_COLORED_VERTEX2D:
 						Matrix mat = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
-						int mvp = glGetUniformLocation(prog.get(), "mvp");
-						glUniformMatrix3fv(mvp, false, mat.getFloatColumnArray());
+						int proj = glGetUniformLocation(prog.get(), "proj");
+						glUniformMatrix3fv(proj, false, mat.getFloatColumnArray());
 
 						layer.draw(prog);
 						break;

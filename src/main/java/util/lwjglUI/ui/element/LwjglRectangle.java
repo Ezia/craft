@@ -13,6 +13,8 @@ import util.lwjglUI.shaderProgram.LwjglProgramPreset;
 import util.lwjglUI.ui.LwjglObject;
 import util.lwjglUI.vertexArray.LwjglVertexArray;
 import util.lwjglUI.vertexArray.LwjglVertexArrayException;
+import util.math.Matrix;
+import util.math.shape.shape2d.Rectangle;
 import util.ui.element.shape2D.UIRectangle;
 import util.math.Vector;
 
@@ -44,7 +46,7 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 
 			float[] positions = new float[4*2];
 			float[] colors = new float[4*4];
-			short[] indices = {0, 1, 2, 3};
+			short[] indices = {0, 2, 1, 3};
 
 			Vector a = shape.pos;
 			Vector b = shape.pos.add(shape.diag);
@@ -132,6 +134,9 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		LwjglVertexArray vertexArray = vertexArrays.get(program.preset);
 		vertexArray.bind();
 		this.indexBuffer.bind();
+
+		int model = glGetUniformLocation(program.get(), "model");
+		glUniformMatrix3fv(model, false, transform.globalMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
