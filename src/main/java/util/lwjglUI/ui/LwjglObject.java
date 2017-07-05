@@ -1,6 +1,8 @@
 package util.lwjglUI.ui;
 
 import util.lwjglUI.shaderProgram.LwjglProgram;
+import util.lwjglUI.shaderProgram.LwjglProgramException;
+import util.lwjglUI.vertexArray.LwjglVertexArrayException;
 
 /**
  * Created by esia on 19/06/17.
@@ -8,5 +10,4 @@ import util.lwjglUI.shaderProgram.LwjglProgram;
 public interface LwjglObject {
 	public abstract void draw(LwjglProgram program);
 
-	public abstract boolean supportsProgram(LwjglProgram program);
 }

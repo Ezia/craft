@@ -22,13 +22,14 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 	private long window = 0;
+
 	private LinkedList<LwjglProgram> programs = new LinkedList<>();
 
 	public LwjglWindow(Rectangle box, String name) {
 		super(box, name);
 	}
 
-	public void draw() {
+	public void draw() throws LwjglProgramException {
 
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
@@ -37,16 +38,27 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 		for (LwjglLayer layer : layers) {
 			for (LwjglProgram prog : programs) {
 
-				Matrix mat = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
-				int mvp = glGetUniformLocation(prog.get(), "mvp");
-				glUniformMatrix3fv(mvp, false, mat.getFloatColumnArray());
+				prog.use();
 
-				layer.draw(prog);
+				switch (prog.preset) {
+					case CRAFT_COLORED_VERTEX2D:
+						Matrix mat = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
+						int mvp = glGetUniformLocation(prog.get(), "mvp");
+						glUniformMatrix3fv(mvp, false, mat.getFloatColumnArray());
+
+						layer.draw(prog);
+						break;
+					default:
+						throw new LwjglProgramException("Unknown program.");
+				}
+
+				prog.unuse();
+
 			}
 		}
 	}
 
-	public void start() {
+	public void start() throws LwjglProgramException {
 		init();
 
 		loop();
@@ -101,11 +113,11 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 		// creates the GLCapabilities instance and makes the OpenGL
 		// bindings available for use.
 		GL.createCapabilities();
-	}
-
-	private void loop() {
 
 		loadPrograms();
+	}
+
+	private void loop() throws LwjglProgramException {
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.

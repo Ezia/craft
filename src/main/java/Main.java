@@ -1,6 +1,6 @@
-import lwjglUI.ui.element.LwjglRectangle;
-import lwjglUI.ui.topObjects.LwjglLayer;
-import lwjglUI.ui.topObjects.LwjglWindow;
+import util.lwjglUI.ui.element.LwjglRectangle;
+import util.lwjglUI.ui.topObjects.LwjglLayer;
+import util.lwjglUI.ui.topObjects.LwjglWindow;
 import util.datastructure.AWTImage;
 import util.math.shape.shape2d.Rectangle;
 import util.math.Vector;
@@ -22,7 +22,10 @@ public class Main {
                 new Vector(500., 500.)
         );
 
-        LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 1.));
+        LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 0.5));
+
+        LwjglRectangle rec1 = new LwjglRectangle(new Vector(100., 100.), new Vector(0., 1., 1., 1.));
+
 
         LwjglWindow win = new LwjglWindow(windowBox , "Craft");
 
@@ -31,8 +34,14 @@ public class Main {
         win.addOnTop(layer0);
 
         layer0.addOnTop(rec);
+        layer0.addOnTop(rec1);
 
-        win.start();
+        try {
+            win.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
 }

@@ -1,8 +1,8 @@
 package util.lwjglUI.shaderProgram;
 
-public class LwjglProgramPreset {
+public enum LwjglProgramPreset {
 
-	public static LwjglProgramPreset CRAFT_COLORED_VERTEX2D = new LwjglProgramPreset(
+	CRAFT_COLORED_VERTEX2D(
 			"craft_colored_vertex",
 			"renderV.glsl",
 			"renderF.glsl",
@@ -14,7 +14,7 @@ public class LwjglProgramPreset {
 	public final String fragmentFile;
 	public final String geometryFile;
 
-	public LwjglProgramPreset(String name, String vertexFile, String fragmentFile, String geometryFile) {
+	private LwjglProgramPreset(String name, String vertexFile, String fragmentFile, String geometryFile) {
 		this.name = name;
 		this.vertexFile = vertexFile;
 		this.fragmentFile = fragmentFile;

@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class LwjglProgram {
 
-	public final String name;
+	public final LwjglProgramPreset preset;
 	private int program;
 	private LwjglFragmentShader fragmentShader;
 	private LwjglVertexShader vertexShader;
@@ -19,15 +19,15 @@ public class LwjglProgram {
 	private boolean loaded, compiled, linked;
 
 	public LwjglProgram(LwjglProgramPreset preset) throws LwjglShaderException, LwjglProgramException {
-		this(preset.name, preset.vertexFile, preset.fragmentFile, preset.geometryFile);
+		create(preset.name, preset.vertexFile, preset.fragmentFile, preset.geometryFile);
+		this.preset = preset;
 	}
 
-	public LwjglProgram(String name,
+	private void create(String name,
 						String vertexShader,
 						String fragmentShader,
 						String geometryShader) throws LwjglShaderException, LwjglProgramException {
 		try {
-			this.name = name;
 			loaded = false;
 			compiled = false;
 			linked = false;
@@ -104,6 +104,10 @@ public class LwjglProgram {
 	public void use() {
 		assert(linked);
 		glUseProgramObjectARB(program);
+	}
+
+	public void unuse() {
+		glUseProgramObjectARB(0);
 	}
 
 	public int get() {

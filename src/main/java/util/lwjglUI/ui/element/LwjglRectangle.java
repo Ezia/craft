@@ -8,32 +8,30 @@ import static org.lwjgl.opengl.GL20.*;
 import util.lwjglUI.buffer.LwjglIndexBuffer;
 import util.lwjglUI.buffer.LwjglVertexBuffer;
 import util.lwjglUI.shaderProgram.LwjglProgram;
+import util.lwjglUI.shaderProgram.LwjglProgramException;
 import util.lwjglUI.shaderProgram.LwjglProgramPreset;
 import util.lwjglUI.ui.LwjglObject;
 import util.lwjglUI.vertexArray.LwjglVertexArray;
+import util.lwjglUI.vertexArray.LwjglVertexArrayException;
 import util.ui.element.shape2D.UIRectangle;
 import util.math.Vector;
+
+import java.util.TreeMap;
 
 public class LwjglRectangle extends UIRectangle implements LwjglObject {
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
 	protected LwjglVertexBuffer vertexColorBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
-	protected LwjglVertexArray vertexArray = null;
-	private boolean init = false;
 
-	@Override
-	public boolean supportsProgram(LwjglProgram program) {
-		if (program.name.equals(LwjglProgramPreset.CRAFT_COLORED_VERTEX2D.name)) {
-			return true;
-		}
-		return false;
-	}
+	protected TreeMap<LwjglProgramPreset, LwjglVertexArray> vertexArrays = new TreeMap<>();
+
+	private boolean init = false;
 
 	public LwjglRectangle(Vector dimension, Vector color) {
 		super(dimension, color);
 	}
 
-	public void initBuffers(LwjglProgram program) {
+	private void updateBuffers(LwjglProgram program) {
 		try {
 			if (init) {
 				return;
@@ -42,7 +40,7 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 			this.vertexColorBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
 			this.vertexPositionBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
 			this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
-			this.vertexArray = new LwjglVertexArray();
+
 
 			float[] positions = new float[4*2];
 			float[] colors = new float[4*4];
@@ -74,25 +72,6 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 			this.vertexColorBuffer.set(colors);
 			this.indexBuffer.set(indices);
 
-			vertexArray.bind();
-
-			int positionAttrib = glGetAttribLocation(program.get(), "position");
-			int colorAttrib = glGetAttribLocation(program.get(), "color");
-
-			glEnableVertexAttribArray(positionAttrib);
-			glEnableVertexAttribArray(colorAttrib);
-
-			this.vertexPositionBuffer.bind();
-			glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, 0);
-
-			this.vertexColorBuffer.bind();
-			glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, false, 0, 0);
-
-			this.vertexPositionBuffer.unbind();
-			this.vertexColorBuffer.unbind();
-
-			vertexArray.unbind();
-
 			init = true;
 
 		} catch (Exception e) {
@@ -101,16 +80,68 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		}
 	}
 
+	private void updateVertexArray(LwjglProgram program) throws LwjglProgramException {
+		if (vertexArrays.containsKey(program.preset)) {
+			return;
+		}
+		switch (program.preset) {
+			case CRAFT_COLORED_VERTEX2D:
+				try {
+					LwjglVertexArray vertexArray = new LwjglVertexArray();
+
+					vertexArray.bind();
+
+					int positionAttrib = glGetAttribLocation(program.get(), "position");
+					int colorAttrib = glGetAttribLocation(program.get(), "color");
+
+					glEnableVertexAttribArray(positionAttrib);
+					glEnableVertexAttribArray(colorAttrib);
+
+					this.vertexPositionBuffer.bind();
+					glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, 0);
+
+					this.vertexColorBuffer.bind();
+					glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, false, 0, 0);
+
+					this.vertexPositionBuffer.unbind();
+					this.vertexColorBuffer.unbind();
+
+					vertexArray.unbind();
+
+					vertexArrays.put(program.preset, vertexArray);
+				} catch (LwjglVertexArrayException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+				break;
+			default:
+				throw new LwjglProgramException("Program not supported.");
+		}
+	}
+
 	@Override
 	public void draw(LwjglProgram program) {
-		initBuffers(program);
+		updateBuffers(program);
+		try {
+			updateVertexArray(program);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 
-		vertexArray.bind();
-		this.indexBuffer.bind();
+		switch (program.preset) {
+			case CRAFT_COLORED_VERTEX2D:
+				LwjglVertexArray vertexArray = vertexArrays.get(program.preset);
+				vertexArray.bind();
+				this.indexBuffer.bind();
 
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+				glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
-		this.indexBuffer.unbind();
-		vertexArray.unbind();
+				this.indexBuffer.unbind();
+				vertexArray.unbind();
+				break;
+			default:
+				return;
+		}
 	}
 }
