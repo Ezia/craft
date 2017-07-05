@@ -56,7 +56,7 @@ public class Table<T> {
 	public void fill(T value) {
 		for (int l = 0; l < lineNbr(); l++) {
 			for (int c = 0; c < columnNbr(); c++) {
-				elements[l][c] = value;
+				set(l, c, value);
 			}
 		}
 	}
@@ -64,9 +64,12 @@ public class Table<T> {
 	public void clear() {
 		for (int l = 0; l < lineNbr(); l++) {
 			for (int c = 0; c < columnNbr(); c++) {
-				elements[l][c] = null;
+				remove(l, c);
 			}
 		}
 	}
 
+	public boolean isOccupied(int l, int c) {
+		return get(l, c) == null;
+	}
 }
