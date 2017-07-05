@@ -22,9 +22,6 @@ public class LwjglLayer extends UILayer<LwjglObject> {
 			case CRAFT_COLORED_VERTEX2D:
 				for (int i = 0; i < this.objectNbr(); i++) {
 					LwjglObject obj = get(i);
-					float depth = (this.objectNbr() - i)/(this.objectNbr()) * 2 - 1;
-					int depthLoc = glGetUniformLocation(program.get(), "depth");
-					glUniform1f(depthLoc, depth);
 					obj.draw(program);
 				}
 

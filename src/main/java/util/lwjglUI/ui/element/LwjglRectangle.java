@@ -53,7 +53,7 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 				colors[4*i + 0] = (float)color.x();
 				colors[4*i + 1] = (float)color.y();
 				colors[4*i + 2] = (float)color.z();
-				colors[4*i + 3] = (float)1.;
+				colors[4*i + 3] = (float)color.w();
 			}
 
 			positions[2*0+0] = (float)a.x();
@@ -129,19 +129,13 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 			System.exit(1);
 		}
 
-		switch (program.preset) {
-			case CRAFT_COLORED_VERTEX2D:
-				LwjglVertexArray vertexArray = vertexArrays.get(program.preset);
-				vertexArray.bind();
-				this.indexBuffer.bind();
+		LwjglVertexArray vertexArray = vertexArrays.get(program.preset);
+		vertexArray.bind();
+		this.indexBuffer.bind();
 
-				glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
-				this.indexBuffer.unbind();
-				vertexArray.unbind();
-				break;
-			default:
-				return;
-		}
+		this.indexBuffer.unbind();
+		vertexArray.unbind();
 	}
 }
