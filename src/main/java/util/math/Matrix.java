@@ -213,6 +213,10 @@ public class Matrix {
 
 	// all left multiply matrices : V * M
 
+	public static Matrix identity(int size) {
+		return identity(size, size);
+	}
+
 	public static Matrix identity(int lineNbr, int columnNbr) {
 		Matrix mat = new Matrix(lineNbr, columnNbr, 0);
 		int minDim = Math.min(lineNbr, columnNbr);
@@ -241,15 +245,19 @@ public class Matrix {
 		return mat;
 	}
 
-	public static Matrix translation2D(Vector translation) {
-		assert(translation.size() == 2);
-		double a = translation.x();
-		double b = translation.y();
-		Matrix mat = new Matrix(3, 3);
-		mat.set(0,0,1); mat.set(0,1,0); mat.set(0,2,0);
-		mat.set(1,0,0); mat.set(1,1,1); mat.set(1,2,0);
-		mat.set(2,0,a); mat.set(2,1,b); mat.set(2,2,1);
-		return mat;
+	public static Matrix translation(Vector translation) {
+//		double a = translation.x();
+//		double b = translation.y();
+//		Matrix mat = new Matrix(3, 3);
+//		mat.set(0,0,1); mat.set(0,1,0); mat.set(0,2,0);
+//		mat.set(1,0,0); mat.set(1,1,1); mat.set(1,2,0);
+//		mat.set(2,0,a); mat.set(2,1,b); mat.set(2,2,1);
+
+		Matrix result = identity(translation.size()+1);
+		for (int i = 0; i < translation.size(); i++) {
+			result.set(translation.size(), i, translation.get(i));
+		}
+		return result;
 	}
 
 	public static Matrix homothety2D(Vector center, Vector scale) {
