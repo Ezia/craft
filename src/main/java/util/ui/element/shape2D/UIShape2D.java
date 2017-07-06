@@ -16,8 +16,4 @@ public abstract class UIShape2D<T extends Shape2D> extends UIObject {
 		this.color = color;
 	}
 
-	@Override
-	public Rectangle getLocalBoundingBox() {
-		return shape.getBoundingBox();
-	}
 }
