@@ -1,5 +1,6 @@
 package util.math;
 
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 public class Transform {
@@ -12,7 +13,7 @@ public class Transform {
 	private Matrix globalMatrix;
 	private Matrix localMatrix;
 	private Transform parent = null;
-	private TreeSet<Transform> children = new TreeSet<>();
+	private LinkedList<Transform> children = new LinkedList<>();
 	private boolean upToDate = true;
 
 	///// CONSTRUCTORS /////
@@ -73,6 +74,7 @@ public class Transform {
 	}
 
 	public Matrix globalMatrix() {
+		update();
 		return globalMatrix;
 	}
 
