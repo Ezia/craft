@@ -23,7 +23,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		lineUpToData = new boolean[lineNbr];
 		columnUpToData = new boolean[columnNbr];
 		lineTransforms = new Transform[lineNbr];
-		lineTransforms = new Transform[columnNbr];
+		columnTransforms = new Transform[columnNbr];
 
 		lineTransforms[0] = new Transform(1, 1);
 		lineUpToData[0] = true;
@@ -42,23 +42,40 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		}
 	}
 
-	private void update() {
+	protected void update() {
 		for (int i = 0; i < lineNbr(); ++i) {
-			if (!lineUpToData[i]) {
+			if (!lineUpToData[i] && i > 0) {
 				double maxWidth = 0;
 				for (int j = 0; j < columnNbr(); ++j) {
-					maxWidth = Math.max(maxWidth, get(i, j).width());
+					if (get(i-1, j) != null) {
+						maxWidth = Math.max(maxWidth, get(i-1, j).width());
+					}
 				}
+				lineTransforms[i].setMatrix(Matrix.translation(new Vector(maxWidth)));
 			}
+			lineUpToData[i] = true;
 		}
 		for (int i = 0; i < columnNbr(); ++i) {
-			if (!columnUpToData[i]) {
+			if (!columnUpToData[i] && i > 0) {
 				double maxHeight = 0;
 				for (int j = 0; j < lineNbr(); ++j) {
-					maxHeight = Math.max(maxHeight, get(j, i).height());
+					if (get(j, i-1) != null) {
+						maxHeight = Math.max(maxHeight, get(j, i-1).height());
+					}
 				}
+				columnTransforms[i].setMatrix(Matrix.translation(new Vector(maxHeight)));
 			}
+			columnUpToData[i] = true;
 		}
+		return;
+	}
+
+	protected Matrix getMatrix(int l, int c) {
+		update();
+		return Matrix.translation(new Vector(
+				lineTransforms[l].globalMatrix().get(1, 0),
+				columnTransforms[c].globalMatrix().get(1, 0)
+		));
 	}
 
 	@Override
@@ -82,22 +99,8 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 	}
 
 	public void set(int l, int c, T value) {
-		if (value != null) {
-			if (lineUpToData[l] && value.width() > lineTransforms[l].localMatrix().get(1, 0)) {
-				lineTransforms[l].setMatrix(Matrix.translation2D(new Vector(value.width())));
-			} else {
-				lineUpToData[l] = false;
-			}
-
-			if (columnUpToData[c] && value.height() > columnTransforms[c].localMatrix().get(1, 0)) {
-				columnTransforms[c].setMatrix(Matrix.translation2D(new Vector(value.height())));
-			} else {
-				columnUpToData[c] = false;
-			}
-		} else {
-			lineUpToData[l] = false;
-			columnUpToData[c] = false;
-		}
+		lineUpToData[l] = false;
+		columnUpToData[c] = false;
 
 		table.set(l, c, value);
 	}
@@ -122,11 +125,11 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 			}
 		} else {
 			for (int i = 0; i < lineNbr(); ++i) {
-				lineTransforms[i].setMatrix(Matrix.translation2D(new Vector(value.width())));
+				lineTransforms[i].setMatrix(Matrix.translation(new Vector(value.width())));
 				lineUpToData[i] = true;
 			}
 			for (int i = 0; i < columnNbr(); ++i) {
-				columnTransforms[i].setMatrix(Matrix.translation2D(new Vector(value.height())));
+				columnTransforms[i].setMatrix(Matrix.translation(new Vector(value.height())));
 				columnUpToData[i] = true;
 			}
 		}

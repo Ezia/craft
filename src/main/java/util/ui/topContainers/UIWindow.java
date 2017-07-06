@@ -1,13 +1,14 @@
 package util.ui.topContainers;
 
 import util.math.shape.shape2d.Rectangle;
+import util.ui.UIObject;
 
 import java.util.LinkedList;
 
 /**
  * Created by esia on 19/06/17.
  */
-public class UIWindow<T, L extends UILayer<T>> {
+public class UIWindow<T extends UIObject, L extends UILayer<T>> {
 	protected LinkedList<L> layers = new LinkedList<>();
 	private Rectangle box;
 	private String name;

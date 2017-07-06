@@ -5,7 +5,7 @@ import util.math.shape.Shape2D;
 import util.math.shape.shape2d.Rectangle;
 import util.math.Vector;
 
-public abstract class UIShape2D<T extends Shape2D> extends UIObject {
+public abstract class UIShape2D<T extends Shape2D> implements UIObject {
 
 	public final Vector color;
 	public final T shape;

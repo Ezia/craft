@@ -82,6 +82,16 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		}
 	}
 
+	public boolean supports(LwjglProgram program) {
+		switch (program.preset) {
+			case CRAFT_COLORED_VERTEX2D:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+
 	private void updateVertexArray(LwjglProgram program) throws LwjglProgramException {
 		if (vertexArrays.containsKey(program.preset)) {
 			return;
@@ -135,8 +145,8 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		vertexArray.bind();
 		this.indexBuffer.bind();
 
-		int model = glGetUniformLocation(program.get(), "model");
-		glUniformMatrix3fv(model, false, transform.globalMatrix().getFloatColumnArray());
+//		int model = glGetUniformLocation(program.get(), "model");
+//		glUniformMatrix3fv(model, false, transform.globalMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 

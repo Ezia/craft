@@ -3,7 +3,7 @@ package util.ui;
 import util.math.Transform;
 import util.math.shape.shape2d.Rectangle;
 
-public abstract class UIObject {
+public interface UIObject {
 
 	abstract public double width();
 

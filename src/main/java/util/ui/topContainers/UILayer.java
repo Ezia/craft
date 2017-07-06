@@ -1,11 +1,13 @@
 package util.ui.topContainers;
 
+import util.ui.UIObject;
+
 import java.util.LinkedList;
 
 /**
  * Created by esia on 19/06/17.
  */
-public class UILayer<T> {
+public class UILayer<T extends UIObject> {
 	protected LinkedList<T> elements = new LinkedList<>();
 
 	public int objectNbr() {

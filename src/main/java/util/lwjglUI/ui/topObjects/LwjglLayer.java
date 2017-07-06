@@ -22,7 +22,12 @@ public class LwjglLayer extends UILayer<LwjglObject> {
 			case CRAFT_COLORED_VERTEX2D:
 				for (int i = 0; i < this.objectNbr(); i++) {
 					LwjglObject obj = get(i);
-					obj.draw(program);
+					if (obj.supports(program)) {
+						int model = glGetUniformLocation(program.get(), "model");
+						glUniformMatrix3fv(model, false, Matrix.identity(3, 3).getFloatColumnArray());
+
+						obj.draw(program);
+					}
 				}
 
 				break;
