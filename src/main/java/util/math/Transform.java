@@ -38,21 +38,34 @@ public class Transform {
 	}
 
 	public void addChild(Transform transform) {
-		assert(transform != null && outputDimension() == transform.inputDimension());
+		assert(!children.contains(transform) && transform != null && outputDimension() == transform.inputDimension());
 		if (transform.parent != null) {
 			transform.parent.removeChild(transform);
 		}
 		children.add(transform);
 		transform.parent = this;
-		transform.upToDate = false;
+		transform.setUpToDate(false);
 	}
 
 	public void removeChild(Transform transform) {
-		assert (transform != null);
+		assert (transform != null && children.contains(transform));
 		children.remove(transform);
 		transform.parent = null;
 		transform.globalMatrix = transform.localMatrix;
-		transform.upToDate = true;
+		transform.setUpToDate(true);
+	}
+
+	private void setUpToDate(boolean utd) {
+		if (isUpToDate() && !utd) {
+			upToDate = false;
+			for (Transform tr : children) {
+				if (tr.isUpToDate()) {
+					setUpToDate(false);
+				}
+			}
+		} else {
+			upToDate = utd;
+		}
 	}
 
 	public boolean isUpToDate() {
@@ -71,36 +84,27 @@ public class Transform {
 
 	public void setIdentity() {
 		this.localMatrix = Matrix.identity(inputDimension()+1, outputDimension()+1);
-		upToDate = false;
+		setUpToDate(false);
 	}
 
 	public void preMultiply(Matrix mat) {
 		this.localMatrix = localMatrix.leftMult(mat);
-		upToDate = false;
+		setUpToDate(false);
 	}
 
 	public void postMultiply(Matrix mat) {
 		this.localMatrix = localMatrix.rightMult(mat);
-		upToDate = false;
+		setUpToDate(false);
 	}
 
 	/**
 	 *
 	 * @return true if globalMatrix has been updated;
 	 */
-	public boolean update() {
-		if (parent != null) {
-			if (parent.update() || !upToDate) {
-				globalMatrix = localMatrix.leftMult(parent.globalMatrix);
-				return true;
-			}
+	public void update() {
+		if (!isUpToDate()) {
+			globalMatrix = localMatrix.leftMult(parent.globalMatrix());
 		}
-		return false;
-	}
-
-	public boolean updateChildren() {
-		// TODO
-		return false;
 	}
 
 	public Vector apply(Vector vect) {
