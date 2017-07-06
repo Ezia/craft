@@ -82,6 +82,11 @@ public class Transform {
 
 	///// OPERATIONS /////
 
+	public void setMatrix(Matrix mat) {
+		this.localMatrix = mat;
+		setUpToDate(false);
+	}
+
 	public void setIdentity() {
 		this.localMatrix = Matrix.identity(inputDimension()+1, outputDimension()+1);
 		setUpToDate(false);
@@ -120,5 +125,21 @@ public class Transform {
 	public Vector applyToVector(Vector vect) {
 		update();
 		return new Vector(vect, 0).leftMult(globalMatrix);
+	}
+
+
+	public Vector applyLocal(Vector vect) {
+//		update();
+		return vect.leftMult(localMatrix);
+	}
+
+	public Vector applyLocalToPoint(Vector vect) {
+//		update();
+		return new Vector(vect, 1).leftMult(localMatrix);
+	}
+
+	public Vector applyLocalToVector(Vector vect) {
+//		update();
+		return new Vector(vect, 0).leftMult(localMatrix);
 	}
 }
