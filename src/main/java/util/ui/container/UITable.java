@@ -7,7 +7,6 @@ import util.math.Vector;
 import util.math.shape.shape2d.Rectangle;
 import util.ui.UIContainer;
 import util.ui.UIObject;
-import util.ui.UIParent;
 
 import java.util.Arrays;
 
@@ -23,6 +22,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 	private Transform[] columnTransforms;
 	private boolean[] lineUpToData;
 	private boolean[] columnUpToData;
+	private boolean upToDate = true;
 
 	public UITable(int lineNbr, int columnNbr) {
 		assert(lineNbr > 0 && columnNbr > 0);
@@ -31,7 +31,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		transforms = new Table<Transform>(lineNbr, columnNbr);
 		for (int i = 0; i < lineNbr; ++i) {
 			for (int j = 0; j < columnNbr; ++j) {
-				transforms.set(i, j, new Transform(2, 2, getTransform()));
+				transforms.set(i, j, new Transform(2, 2, transform));
 			}
 		}
 
@@ -61,28 +61,6 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		}
 	}
 
-	protected Matrix getMatrix(int l, int c) {
-		update();
-		return Matrix.translation(new Vector(
-				lineTransforms[l].globalMatrix().get(1, 0)
-						- (lineTransforms[l].localMatrix().get(1, 0) + get(l, c).width())/2,
-				columnTransforms[c].globalMatrix().get(1, 0)
-						- (columnTransforms[c].localMatrix().get(1, 0) + get(l, c).height())/2
-		));
-	}
-
-	@Override
-	public double width() {
-		update();
-		return lineTransforms[lineNbr()-1].applyToPoint(new Vector(0.)).x();
-	}
-
-	@Override
-	public double height() {
-		update();
-		return columnTransforms[columnNbr()-1].applyToPoint(new Vector(0.)).x();
-	}
-
 	public int columnNbr() {
 		return table.columnNbr();
 	}
@@ -92,6 +70,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 	}
 
 	public void set(int l, int c, T value) {
+		// TODO : optimize in certain cases
 		lineUpToData[l] = false;
 		columnUpToData[c] = false;
 
@@ -100,9 +79,11 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		}
 
 		value.setParent(this);
-		value.getTransform().setParent(transforms.get(l, c));
+		value.setTransformParent(transforms.get(l, c));
 
 		table.set(l, c, value);
+
+		upToDate = false;
 	}
 
 	public T get(int l, int c) {
@@ -115,60 +96,62 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 				set(i, j, value);
 			}
 		}
+		upToDate = false;
 	}
 
 	protected void update() {
-		for (int i = 0; i < lineNbr(); ++i) {
-			if (!lineUpToData[i]) {
-				double maxWidth = 0;
-				for (int j = 0; j < columnNbr(); ++j) {
-					if (get(i, j) != null) {
-						maxWidth = Math.max(maxWidth, get(i, j).width());
+		if (!upToDate) {
+			for (int i = 0; i < lineNbr(); ++i) {
+				if (!lineUpToData[i]) {
+					double maxWidth = 0;
+					for (int j = 0; j < columnNbr(); ++j) {
+						if (get(i, j) != null) {
+							maxWidth = Math.max(maxWidth, get(i, j).width());
+						}
+					}
+					lineTransforms[i].setMatrix(Matrix.translation(new Vector(maxWidth)));
+				}
+			}
+
+			for (int i = 0; i < columnNbr(); ++i) {
+				if (!columnUpToData[i]) {
+					double maxHeight = 0;
+					for (int j = 0; j < lineNbr(); ++j) {
+						if (get(j, i) != null) {
+							maxHeight = Math.max(maxHeight, get(j, i).height());
+						}
+					}
+					columnTransforms[i].setMatrix(Matrix.translation(new Vector(maxHeight)));
+				}
+			}
+
+			for (int l = 0; l < columnNbr(); ++l) {
+				for (int c = 0; c < columnNbr(); ++c) {
+					if ((!lineUpToData[l] || !columnUpToData[c]) && get(l, c) != null) {
+						transforms.get(l, c).setMatrix(Matrix.translation(new Vector(
+								lineTransforms[l].globalMatrix().get(1, 0)
+										- (lineTransforms[l].localMatrix().get(1, 0) + get(l, c).width())/2,
+								columnTransforms[c].globalMatrix().get(1, 0)
+										- (columnTransforms[c].localMatrix().get(1, 0) + get(l, c).height())/2
+						)));
 					}
 				}
-				lineTransforms[i].setMatrix(Matrix.translation(new Vector(maxWidth)));
 			}
-		}
 
-		for (int i = 0; i < columnNbr(); ++i) {
-			if (!columnUpToData[i]) {
-				double maxHeight = 0;
-				for (int j = 0; j < lineNbr(); ++j) {
-					if (get(j, i) != null) {
-						maxHeight = Math.max(maxHeight, get(j, i).height());
-					}
-				}
-				columnTransforms[i].setMatrix(Matrix.translation(new Vector(maxHeight)));
-			}
-		}
+			Arrays.fill(lineUpToData, true);
+			Arrays.fill(columnUpToData, true);
 
-		for (int l = 0; l < columnNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				if ((!lineUpToData[l] || !columnUpToData[c]) && get(l, c) != null) {
-					transforms.get(l, c).setMatrix(Matrix.translation(new Vector(
-							lineTransforms[l].globalMatrix().get(1, 0)
-									- (lineTransforms[l].localMatrix().get(1, 0) + get(l, c).width())/2,
-							columnTransforms[c].globalMatrix().get(1, 0)
-									- (columnTransforms[c].localMatrix().get(1, 0) + get(l, c).height())/2
-					)));
-				}
-			}
-		}
-
-		for (int l = 0; l < columnNbr(); ++l) {
-			lineUpToData[l] = true;
-		}
-		for (int c = 0; c < columnNbr(); ++c) {
-			columnUpToData[c] = true;
+			upToDate = true;
 		}
 	}
 
 	@Override
-	public void removeChild(UIObject child) {
+	public void remove(UIObject child) {
 		for (int i = 0; i < lineNbr(); i++) {
 			for (int j = 0; j < columnNbr(); ++j) {
 				if (get(i, j) == child) {
 					this.table.set(i, j, null);
+					upToDate = false;
 					return;
 				}
 			}
@@ -177,8 +160,20 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 
 	@Override
 	public Rectangle getLocalBoundingBox() {
-		return getTransform().applyLocalToRectangle(
+		return transform.applyLocalToRectangle(
 				new Rectangle(new Vector(0., 0.), new Vector(width(), height()))
 		);
+	}
+
+	@Override
+	public double width() {
+		update();
+		return lineTransforms[lineNbr()-1].applyToPoint(new Vector(0.)).x();
+	}
+
+	@Override
+	public double height() {
+		update();
+		return columnTransforms[columnNbr()-1].applyToPoint(new Vector(0.)).x();
 	}
 }

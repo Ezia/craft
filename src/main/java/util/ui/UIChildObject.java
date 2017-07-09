@@ -9,7 +9,7 @@ import util.math.shape.shape2d.Rectangle;
 public abstract class UIChildObject implements UIObject {
 
 	private UIParent parent = null;
-	private final Transform transform = new Transform(2, 2);
+	protected final Transform transform = new Transform(2, 2);
 
 	@Override
 	public UIParent getParent() {
@@ -19,15 +19,15 @@ public abstract class UIChildObject implements UIObject {
 	@Override
 	public void setParent(UIParent parent) {
 		if (this.parent != null) {
-			this.parent.removeChild(this);
+			this.parent.remove(this);
 		}
-		getTransform().setParent(null);
+		setTransformParent(null);
 		this.parent = parent;
 	}
 
 	@Override
-	public Transform getTransform() {
-		return transform;
+	public void setTransformParent(Transform parent) {
+		transform.setParent(parent);
 	}
 
 	@Override

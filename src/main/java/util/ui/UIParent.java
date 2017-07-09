@@ -5,5 +5,5 @@ package util.ui;
  */
 public interface UIParent {
 
-	public void removeChild(UIObject child);
+	public void remove(UIObject child);
 }

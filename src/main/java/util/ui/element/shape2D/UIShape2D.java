@@ -18,6 +18,6 @@ public abstract class UIShape2D<T extends Shape2D> extends UIElement {
 
 	@Override
 	public Rectangle getLocalBoundingBox() {
-		return getTransform().applyLocalToRectangle(shape.getBoundingBox());
+		return transform.applyLocalToRectangle(shape.getBoundingBox());
 	}
 }

@@ -14,7 +14,7 @@ public interface UIObject {
 
 	public void setParent(UIParent parent);
 
-	public Transform getTransform();
+	public void setTransformParent(Transform parent);
 
 	public double width();
 
