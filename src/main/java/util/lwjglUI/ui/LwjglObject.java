@@ -2,7 +2,6 @@ package util.lwjglUI.ui;
 
 import util.lwjglUI.shaderProgram.LwjglProgram;
 import util.lwjglUI.shaderProgram.LwjglProgramException;
-import util.lwjglUI.vertexArray.LwjglVertexArrayException;
 import util.ui.UIObject;
 
 /**

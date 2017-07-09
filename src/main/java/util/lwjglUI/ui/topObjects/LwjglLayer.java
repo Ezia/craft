@@ -17,24 +17,16 @@ import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 public class LwjglLayer extends UILayer<LwjglObject> {
 
 	public void draw(LwjglProgram program) throws LwjglProgramException {
-
 		switch (program.preset) {
 			case CRAFT_COLORED_VERTEX2D:
 				for (int i = 0; i < this.objectNbr(); i++) {
-					LwjglObject obj = get(i);
-					if (obj.supports(program)) {
-						int model = glGetUniformLocation(program.get(), "model");
-						glUniformMatrix3fv(model, false, Matrix.identity(3, 3).getFloatColumnArray());
-
-						obj.draw(program);
+					if (get(i).supports(program)) {
+						get(i).draw(program);
 					}
 				}
-
 				break;
 			default:
 				throw new LwjglProgramException("Unknown program.");
 		}
-
-
 	}
 }
