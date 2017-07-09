@@ -137,6 +137,18 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		table.fill(value);
 	}
 
+	@Override
+	public void removeChild(UIObject child) {
+		for (int i = 0; i < lineNbr(); i++) {
+			for (int j = 0; j < columnNbr(); ++j) {
+				if (get(i, j) == child) {
+					remove(i, j);
+					return;
+				}
+			}
+		}
+	}
+
 	public void clear() {
 		fill(null);
 	}

@@ -1,12 +1,22 @@
 package util.ui;
 
-import util.math.Transform;
-import util.math.shape.shape2d.Rectangle;
 
+import util.math.Transform;
+
+/**
+ *
+ * @param <T> The "real" type of UIObject.
+ */
 public interface UIObject {
 
-	abstract public double width();
+	public UIParent getParent();
 
-	abstract public double height();
+	public void setParent(UIParent parent);
+
+	public Transform getTransform();
+
+	public double width();
+
+	public double height();
 
 }

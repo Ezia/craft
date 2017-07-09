@@ -1,11 +1,10 @@
 package util.ui.element.shape2D;
 
-import util.ui.UIObject;
+import util.ui.UIElement;
 import util.math.shape.Shape2D;
-import util.math.shape.shape2d.Rectangle;
 import util.math.Vector;
 
-public abstract class UIShape2D<T extends Shape2D> implements UIObject {
+public abstract class UIShape2D<T extends Shape2D> extends UIElement {
 
 	public final Vector color;
 	public final T shape;
@@ -15,5 +14,4 @@ public abstract class UIShape2D<T extends Shape2D> implements UIObject {
 		this.shape = shape;
 		this.color = color;
 	}
-
 }
