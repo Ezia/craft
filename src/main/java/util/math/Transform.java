@@ -1,5 +1,7 @@
 package util.math;
 
+import util.math.shape.shape2d.Rectangle;
+
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -12,9 +14,9 @@ public class Transform {
 	 */
 	private Matrix globalMatrix;
 	private Matrix localMatrix;
-	private Transform parent = null;
+	private Transform parent;
 	private LinkedList<Transform> children = new LinkedList<>();
-	private boolean upToDate = true;
+	private boolean upToDate;
 
 	///// CONSTRUCTORS /////
 
@@ -26,6 +28,15 @@ public class Transform {
 	public Transform(int inputDim, int outputDim) {
 		localMatrix = Matrix.identity(inputDim+1, outputDim+1);
 		globalMatrix = localMatrix;
+		upToDate = true;
+		parent = null;
+	}
+
+	public Transform(int inputDim, int outputDim, Transform parent) {
+		localMatrix = Matrix.identity(inputDim+1, outputDim+1);
+		globalMatrix = null;
+		upToDate = false;
+		this.parent = parent;
 	}
 
 	///// ACCESSORS /////
@@ -39,12 +50,18 @@ public class Transform {
 	}
 
 	public void setParent(Transform parent) {
-		this.parent.removeChild(this);
-		parent.addChild(this);
+		if (this.parent != null) {
+			this.parent.removeChild(this);
+		}
+		if (parent != null) {
+			parent.addChild(this);
+		}
 	}
 
 	public void addChild(Transform transform) {
-		assert(!children.contains(transform) && transform != null && outputDimension() == transform.inputDimension());
+		assert(!children.contains(transform));
+		assert(transform != null);
+		assert(outputDimension() == transform.inputDimension());
 		if (transform.parent != null) {
 			transform.parent.removeChild(transform);
 		}
@@ -92,6 +109,7 @@ public class Transform {
 	///// OPERATIONS /////
 
 	public void setMatrix(Matrix mat) {
+		assert(mat != null);
 		this.localMatrix = mat;
 		setUpToDate(false);
 	}
@@ -111,14 +129,15 @@ public class Transform {
 		setUpToDate(false);
 	}
 
-	/**
-	 *
-	 * @return true if globalMatrix has been updated;
-	 */
 	public void update() {
 		if (!isUpToDate()) {
-			globalMatrix = localMatrix.leftMult(parent.globalMatrix());
+			if (parent == null) {
+				globalMatrix = localMatrix;
+			} else {
+				globalMatrix = localMatrix.leftMult(parent.globalMatrix());
+			}
 		}
+		upToDate = true;
 	}
 
 	public Vector apply(Vector vect) {
@@ -150,5 +169,13 @@ public class Transform {
 	public Vector applyLocalToVector(Vector vect) {
 //		update();
 		return new Vector(vect, 0).leftMult(localMatrix);
+	}
+
+	public Rectangle applyToRectangle(Rectangle rect) {
+		return new Rectangle(applyToPoint(rect.pos), applyToVector(rect.diag));
+	}
+
+	public Rectangle applyLocalToRectangle(Rectangle rect) {
+		return new Rectangle(applyLocalToPoint(rect.pos), applyLocalToVector(rect.diag));
 	}
 }
