@@ -38,6 +38,11 @@ public class Transform {
 		return localMatrix.columnNbr() - 1;
 	}
 
+	public void setParent(Transform parent) {
+		this.parent.removeChild(this);
+		parent.addChild(this);
+	}
+
 	public void addChild(Transform transform) {
 		assert(!children.contains(transform) && transform != null && outputDimension() == transform.inputDimension());
 		if (transform.parent != null) {
@@ -81,6 +86,8 @@ public class Transform {
 	public Matrix localMatrix() {
 		return localMatrix;
 	}
+
+	public Transform parent() { return parent; }
 
 	///// OPERATIONS /////
 
