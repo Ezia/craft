@@ -5,5 +5,4 @@ package util.ui;
  */
 public abstract class UIElement extends UIChildObject {
 
-
 }

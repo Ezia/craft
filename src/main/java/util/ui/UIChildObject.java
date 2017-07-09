@@ -1,6 +1,7 @@
 package util.ui;
 
 import util.math.Transform;
+import util.math.shape.shape2d.Rectangle;
 
 /**
  * Created by esia on 08/07/17.
@@ -17,13 +18,20 @@ public abstract class UIChildObject implements UIObject {
 
 	@Override
 	public void setParent(UIParent parent) {
-		this.parent.removeChild(this);
-		this.transform.setParent(null);
+		if (this.parent != null) {
+			this.parent.removeChild(this);
+		}
+		getTransform().setParent(null);
 		this.parent = parent;
 	}
 
 	@Override
 	public Transform getTransform() {
 		return transform;
+	}
+
+	@Override
+	public Rectangle getGlobalBoundingBox() {
+		return transform.applyToRectangle(getLocalBoundingBox());
 	}
 }

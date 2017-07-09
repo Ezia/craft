@@ -2,6 +2,7 @@ package util.ui;
 
 
 import util.math.Transform;
+import util.math.shape.shape2d.Rectangle;
 
 /**
  *
@@ -18,5 +19,9 @@ public interface UIObject {
 	public double width();
 
 	public double height();
+
+	public Rectangle getLocalBoundingBox();
+
+	public Rectangle getGlobalBoundingBox();
 
 }
