@@ -5,6 +5,7 @@ import util.lwjglUI.ui.LwjglObject;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import util.lwjglUI.vertexArray.LwjglVertexArray;
 import util.ui.topContainers.UIWindow;
 import util.math.Matrix;
 import util.math.shape.shape2d.Rectangle;
@@ -12,18 +13,24 @@ import util.math.Vector;
 
 import java.nio.IntBuffer;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 	private long window = 0;
 
 	private LinkedList<LwjglProgram> programs = new LinkedList<>();
+
+	private TreeMap<LwjglProgramPreset, LwjglProgram> prog = new TreeMap<>();
+
+	private Matrix projectionMatrix;
 
 	public LwjglWindow(Rectangle box, String name) {
 		super(box, name);
@@ -38,26 +45,14 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		projectionMatrix = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
+
+		for (LwjglProgram p : prog.values()) {
+			updateProgramData(p);
+		}
+
 		for (LwjglLayer layer : layers) {
-			for (LwjglProgram prog : programs) {
-
-				prog.use();
-
-				switch (prog.preset) {
-					case CRAFT_COLORED_VERTEX2D:
-						Matrix mat = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
-						int proj = glGetUniformLocation(prog.get(), "proj");
-						glUniformMatrix3fv(proj, false, mat.getFloatColumnArray());
-
-						layer.draw(prog);
-						break;
-					default:
-						throw new LwjglProgramException("Unknown program.");
-				}
-
-				prog.unuse();
-
-			}
+			layer.draw(this);
 		}
 	}
 
@@ -116,8 +111,6 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 		// creates the GLCapabilities instance and makes the OpenGL
 		// bindings available for use.
 		GL.createCapabilities();
-
-		loadPrograms();
 	}
 
 	private void loop() throws LwjglProgramException {
@@ -148,24 +141,6 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 		});
 	}
 
-	private void loadPrograms() {
-		try {
-			LwjglProgram program = new LwjglProgram(LwjglProgramPreset.CRAFT_COLORED_VERTEX2D);
-			program.load();
-			program.compile();
-			program.link();
-			program.use();
-
-			programs.add(program);
-		} catch (Exception e) {
-			for (LwjglProgram prog : programs) {
-				prog.delete();
-			}
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
 	/**
 	 * Synchronize the window size from GLFW with the window Box
 	 */
@@ -181,6 +156,39 @@ public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
 				new Vector((double)x.get(0), (double)y.get(0)),
 				new Vector((double)w.get(0), (double)h.get(0))
 		));
+	}
+
+	public LwjglProgram getProgram(LwjglProgramPreset preset) {
+		if (!prog.containsKey(preset)) {
+			try {
+				LwjglProgram program = new LwjglProgram(preset);
+				program.load();
+				program.compile();
+				program.link();
+				updateProgramData(program);
+				prog.put(preset, program);
+			} catch (Exception e) {
+				for (LwjglProgram progr : prog.values()) {
+					progr.delete();
+				}
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		return prog.get(preset);
+	}
+
+	private void updateProgramData(LwjglProgram program) throws LwjglProgramException {
+		switch (program.preset) {
+			case CRAFT_COLORED_VERTEX2D:
+				program.use();
+				int proj = glGetUniformLocation(program.get(), "proj");
+				glUniformMatrix3fv(proj, false, projectionMatrix.getFloatColumnArray());
+				program.unuse();
+				break;
+			default:
+				throw new LwjglProgramException("Unknown program.");
+		}
 	}
 
 	private void end() {
