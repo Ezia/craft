@@ -1,5 +1,6 @@
 package util.math;
 
+import static util.Test.*;
 import util.shape.Rectangle;
 
 import java.util.LinkedList;
@@ -13,11 +14,18 @@ public class Transform {
 	 */
 	private Matrix globalMatrix;
 	private Matrix localMatrix;
-	private Transform parent;
+	private Transform parent = null;
 	private LinkedList<Transform> children = new LinkedList<>();
 	private boolean upToDate;
 
 	///// CONSTRUCTORS /////
+
+	public Transform(int inputDim, int outputDim, Transform parent) {
+		this.localMatrix = Matrix.identity(greater(inputDim, 0)+1, greater(outputDim, 0)+1);
+		this.globalMatrix = null;
+		this.upToDate = false;
+		this.setParent(parent);
+	}
 
 	/**
 	 *
@@ -25,17 +33,7 @@ public class Transform {
 	 * @param dim2 Dimension of the transformed objects
 	 */
 	public Transform(int inputDim, int outputDim) {
-		localMatrix = Matrix.identity(inputDim+1, outputDim+1);
-		globalMatrix = localMatrix;
-		upToDate = true;
-		parent = null;
-	}
-
-	public Transform(int inputDim, int outputDim, Transform parent) {
-		localMatrix = Matrix.identity(inputDim+1, outputDim+1);
-		globalMatrix = null;
-		upToDate = false;
-		this.parent = parent;
+		this(inputDim, outputDim, null);
 	}
 
 	///// ACCESSORS /////
@@ -54,124 +52,122 @@ public class Transform {
 		}
 		if (parent != null) {
 			parent.addChild(this);
+		} else {
+			this.parent = null;
 		}
 	}
 
 	public void addChild(Transform transform) {
-		assert(!children.contains(transform));
-		assert(transform != null);
-		assert(outputDimension() == transform.inputDimension());
+		notContained(notNull(transform), this.children);
+		equal(this.outputDimension(), transform.inputDimension());
 		if (transform.parent != null) {
 			transform.parent.removeChild(transform);
 		}
-		children.add(transform);
+		this.children.add(transform);
 		transform.parent = this;
 		transform.setUpToDate(false);
 	}
 
 	public void removeChild(Transform transform) {
-		assert (transform != null && children.contains(transform));
-		children.remove(transform);
+		contained(notNull(transform), this.children);
+		this.children.remove(transform);
 		transform.parent = null;
 		transform.globalMatrix = transform.localMatrix;
 		transform.setUpToDate(true);
 	}
 
-	private void setUpToDate(boolean utd) {
-		if (isUpToDate() && !utd) {
-			upToDate = false;
-			for (Transform tr : children) {
-				if (tr.isUpToDate()) {
-					setUpToDate(false);
-				}
+	private void setUpToDate(boolean upToDate) {
+		if (this.upToDate && !upToDate) {
+			this.upToDate = false;
+			for (Transform transform : this.children) {
+				transform.setUpToDate(false);
 			}
 		} else {
-			upToDate = utd;
+			this.upToDate = upToDate;
 		}
 	}
 
 	public boolean isUpToDate() {
-		return upToDate;
+		return this.upToDate;
 	}
 
 	public Matrix globalMatrix() {
-		update();
-		return globalMatrix;
+		this.update();
+		return this.globalMatrix;
 	}
 
 	public Matrix localMatrix() {
-		return localMatrix;
+		return this.localMatrix;
 	}
 
-	public Transform parent() { return parent; }
+	public Transform parent() { return this.parent; }
 
 	///// OPERATIONS /////
 
-	public void setMatrix(Matrix mat) {
-		assert(mat != null);
-		this.localMatrix = mat;
-		setUpToDate(false);
+	public void update() {
+		if (!this.upToDate) {
+			if (this.parent == null) {
+				this.globalMatrix = this.localMatrix;
+			} else {
+				this.globalMatrix = this.parent.globalMatrix().times(this.localMatrix);
+			}
+			this.upToDate = true;
+		}
+	}
+
+	public void setMatrix(Matrix matrix) {
+		equal(notNull(matrix).lineNbr(), this.inputDimension()+1);
+		equal(matrix.columnNbr(), this.outputDimension()+1);
+		this.localMatrix = matrix;
+		this.setUpToDate(false);
 	}
 
 	public void setIdentity() {
-		this.localMatrix = Matrix.identity(inputDimension()+1, outputDimension()+1);
-		setUpToDate(false);
+		this.localMatrix = Matrix.identity(this.inputDimension()+1, this.outputDimension()+1);
+		this.setUpToDate(false);
 	}
 
-	public void preMultiply(Matrix mat) {
-		this.localMatrix = mat.times(localMatrix);
-		setUpToDate(false);
+	public void preMultiply(Matrix matrix) {
+		this.localMatrix = matrix.times(this.localMatrix);
+		this.setUpToDate(false);
 	}
 
-	public void postMultiply(Matrix mat) {
-		this.localMatrix = localMatrix.times(mat);
-		setUpToDate(false);
+	public void postMultiply(Matrix matrix) {
+		this.localMatrix = this.localMatrix.times(matrix);
+		this.setUpToDate(false);
 	}
 
-	public void update() {
-		if (!isUpToDate()) {
-			if (parent == null) {
-				globalMatrix = localMatrix;
-			} else {
-				globalMatrix = parent.globalMatrix().times(localMatrix);
-			}
-		}
-		upToDate = true;
+	public Vector apply(Vector vector) {
+		return vector.times(this.globalMatrix());
 	}
 
-	public Vector apply(Vector vect) {
-		update();
-		return vect.times(globalMatrix);
+	public Vector applyToPoint(Vector vector) {
+		return new Vector(vector, 1.).times(this.globalMatrix());
 	}
 
-	public Vector applyToPoint(Vector vect) {
-		update();
-		return new Vector(vect, 1).times(globalMatrix);
+	public Vector applyToVector(Vector vector) {
+		return new Vector(vector, 0.).times(this.globalMatrix());
 	}
 
-	public Vector applyToVector(Vector vect) {
-		update();
-		return new Vector(vect, 0).times(globalMatrix);
+	public Vector applyLocal(Vector vector) {
+		return vector.times(this.localMatrix);
 	}
 
-
-	public Vector applyLocal(Vector vect) {
-		return vect.times(localMatrix);
+	public Vector applyLocalToPoint(Vector vector) {
+		return new Vector(vector, 1).times(this.localMatrix);
 	}
 
-	public Vector applyLocalToPoint(Vector vect) {
-		return new Vector(vect, 1).times(localMatrix);
+	public Vector applyLocalToVector(Vector vector) {
+		return new Vector(vector, 0).times(this.localMatrix);
 	}
 
-	public Vector applyLocalToVector(Vector vect) {
-		return new Vector(vect, 0).times(localMatrix);
+	public Rectangle applyToRectangle(Rectangle rectangle) {
+		return new Rectangle(this.applyToPoint(rectangle.pos),
+				this.applyToVector(rectangle.diag));
 	}
 
-	public Rectangle applyToRectangle(Rectangle rect) {
-		return new Rectangle(applyToPoint(rect.pos), applyToVector(rect.diag));
-	}
-
-	public Rectangle applyLocalToRectangle(Rectangle rect) {
-		return new Rectangle(applyLocalToPoint(rect.pos), applyLocalToVector(rect.diag));
+	public Rectangle applyLocalToRectangle(Rectangle rectangle) {
+		return new Rectangle(this.applyLocalToPoint(rectangle.pos),
+				this.applyLocalToVector(rectangle.diag));
 	}
 }

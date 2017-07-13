@@ -20,14 +20,14 @@ public class Vector {
 	}
 
 	public Vector(int size, double[] values) {
-		this.values = new double[range(size, 1, nonNull(values).length+1)];
+		this.values = new double[range(size, 1, notNull(values).length+1)];
 		for (int i = 0; i < size; i++) {
 			this.values[i] = values[i];
 		}
 	}
 
 	public Vector(Vector vector, double ... endValues) {
-		this.values = new double[nonNull(vector).size() + nonNull(endValues).length];
+		this.values = new double[notNull(vector).size() + notNull(endValues).length];
 		for (int i = 0; i < vector.size(); i++) {
 			this.values[i] = vector.values[i];
 		}
@@ -41,15 +41,15 @@ public class Vector {
 	}
 
 	public Vector(int size, Vector vector) {
-		this(size, nonNull(vector).values);
+		this(size, notNull(vector).values);
 	}
 
 	public Vector(double ... values) {
-		this(nonNull(values).length, values);
+		this(notNull(values).length, values);
 	}
 
 	public Vector(Vector vector) {
-		this(nonNull(vector).size(), vector.values);
+		this(notNull(vector).size(), vector.values);
 	}
 
 	///// ACCESSORS /////
@@ -135,7 +135,7 @@ public class Vector {
 	///// OPERATIONS /////
 
 	public Vector cross(Vector vector) {
-		sizeEqual(this, nonNull(vector));
+		sizeEqual(this, notNull(vector));
 		return new Vector(
 				this.y()*vector.z() - this.z()*vector.y(),
 				this.z()*vector.x() - this.x()*vector.z(),
@@ -144,7 +144,7 @@ public class Vector {
 	}
 
 	public double dot(Vector vector) {
-		sizeEqual(this, nonNull(vector));
+		sizeEqual(this, notNull(vector));
 		double result = 0;
 		for (int i = 0; i < this.size(); i++) {
 			result += this.values[i] * vector.values[i];
@@ -153,7 +153,7 @@ public class Vector {
 	}
 
 	public Vector times(Matrix matrix) {
-		equal(nonNull(matrix.lineNbr()), this.size());
+		equal(notNull(matrix.lineNbr()), this.size());
 		Vector result = new Vector(matrix.columnNbr());
 		for (int c = 0; c < matrix.columnNbr(); ++c) {
 			double value = 0;
@@ -166,7 +166,7 @@ public class Vector {
 	}
 
 	public Vector add(Vector vector) {
-		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		Vector result = new Vector(equal(notNull(vector).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			result.values[i] = this.values[i] + vector.values[i];
 		}
@@ -182,7 +182,7 @@ public class Vector {
 	}
 
 	public Vector sub(Vector vector) {
-		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		Vector result = new Vector(equal(notNull(vector).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			result.values[i] = this.values[i] - vector.values[i];
 		}
@@ -190,7 +190,7 @@ public class Vector {
 	}
 
 	public Vector wiseTimes(Vector vector) {
-		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		Vector result = new Vector(equal(notNull(vector).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			result.values[i] = this.values[i] * vector.values[i];
 		}
@@ -206,7 +206,7 @@ public class Vector {
 	}
 
 	public Vector capMax(Vector cap) {
-		Vector result = new Vector(equal(nonNull(cap).size(), this.size()));
+		Vector result = new Vector(equal(notNull(cap).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			result.values[i] = Math.min(this.values[i], cap.values[i]);
 		}
@@ -214,7 +214,7 @@ public class Vector {
 	}
 
 	public Vector capMin(Vector cap) {
-		Vector result = new Vector(equal(nonNull(cap).size(), this.size()));
+		Vector result = new Vector(equal(notNull(cap).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			result.values[i] = Math.max(this.values[i], cap.values[i]);
 		}
@@ -247,7 +247,7 @@ public class Vector {
 	}
 
 	public Vector clamp(Vector min, Vector max) {
-		Vector result = new Vector(equal(equal(nonNull(min).size(), nonNull(max).size()), this.size()));
+		Vector result = new Vector(equal(equal(notNull(min).size(), notNull(max).size()), this.size()));
 		for (int i = 0; i < this.size(); i++) {
 			lessOrEqual(min.values[i], max.values[i]);
 			result.values[i] = Math.min(Math.max(this.values[i], min.values[i]), max.values[i]);

@@ -53,7 +53,7 @@ public class Main {
 
         win.addOnTop(layer0);
 
-        layer0.addOnTop(rec);
+//        layer0.addOnTop(rec);
         layer0.addOnTop(tab);
 
         try {

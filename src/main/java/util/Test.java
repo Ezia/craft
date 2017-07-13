@@ -2,6 +2,8 @@ package util;
 
 import util.math.Vector;
 
+import java.util.Collection;
+
 /**
  * Created by esia on 13/07/17.
  */
@@ -115,7 +117,7 @@ public class Test {
 
 	///// REFERENCE /////
 
-	public static <T> T nonNull(T value) {
+	public static <T> T notNull(T value) {
 		if (value == null) {
 			throw new IllegalArgumentException();
 		} else {
@@ -170,6 +172,24 @@ public class Test {
 			throw new IllegalArgumentException();
 		} else {
 			return vector;
+		}
+	}
+
+	///// COLLECTION /////
+
+	public static <T> T notContained(T value, Collection<T> collection) {
+		if (collection.contains(value)) {
+			throw new IllegalArgumentException();
+		} else {
+			return value;
+		}
+	}
+
+	public static <T> T contained(T value, Collection<T> collection) {
+		if (!collection.contains(value)) {
+			throw new IllegalArgumentException();
+		} else {
+			return value;
 		}
 	}
 

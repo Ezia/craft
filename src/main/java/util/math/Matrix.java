@@ -22,7 +22,7 @@ public class Matrix {
 	}
 
 	public Matrix(int lineNbr, int columnNbr, double[][] values) {
-		this.values = new double[range(lineNbr, 1, nonNull(values).length+1)]
+		this.values = new double[range(lineNbr, 1, notNull(values).length+1)]
 				[greater(columnNbr, 0)];
 		for (int l = 0; l < lineNbr; ++l) {
 			lessOrEqual(columnNbr, values[l].length);
@@ -33,7 +33,7 @@ public class Matrix {
 	}
 
 	public Matrix(int lineNbr, int columnNbr, Matrix matrix) {
-		this(lineNbr, columnNbr, nonNull(matrix).values);
+		this(lineNbr, columnNbr, notNull(matrix).values);
 	}
 
 	public Matrix(int lineNbr, int columnNbr) {
@@ -45,11 +45,11 @@ public class Matrix {
 	}
 
 	public Matrix(Matrix matrix) {
-		this(nonNull(matrix).lineNbr(), matrix.columnNbr(), matrix);
+		this(notNull(matrix).lineNbr(), matrix.columnNbr(), matrix);
 	}
 
 	public Matrix(double[][] values) {
-		this(greater(nonNull(values).length, 0), values[0].length, values);
+		this(greater(notNull(values).length, 0), values[0].length, values);
 	}
 
 	///// ACCESSORS /////
@@ -126,7 +126,7 @@ public class Matrix {
 	 * @return
 	 */
 	public Matrix times(Matrix matrix) {
-		equal(this.columnNbr(), nonNull(matrix).lineNbr());
+		equal(this.columnNbr(), notNull(matrix).lineNbr());
 		Matrix result = new Matrix(this.lineNbr(), matrix.columnNbr());
 		for (int l1 = 0; l1 < this.lineNbr(); ++l1) {
 			for (int c2 = 0; c2 < matrix.columnNbr(); ++c2) {
@@ -141,7 +141,7 @@ public class Matrix {
 	}
 
 	public Vector times(Vector vector) {
-		equal(this.columnNbr(), nonNull(vector).size());
+		equal(this.columnNbr(), notNull(vector).size());
 		double[] result = new double[this.lineNbr()];
 		for (int l = 0; l < this.lineNbr(); ++l) {
 			double value = 0;
@@ -164,7 +164,7 @@ public class Matrix {
 	}
 
 	public Matrix wiseTimes(Matrix matrix) {
-		Matrix result = new Matrix(equal(this.lineNbr(), nonNull(matrix).lineNbr()),
+		Matrix result = new Matrix(equal(this.lineNbr(), notNull(matrix).lineNbr()),
 				equal(this.columnNbr(), matrix.columnNbr()));
 		for (int l = 0; l < this.lineNbr(); ++l) {
 			for (int c = 0; c < this.columnNbr(); ++c) {
@@ -198,7 +198,7 @@ public class Matrix {
 	 * @return
 	 */
 	public static Matrix rotation2D(Vector center, double angle) {
-		double centerX = sizeEqual(nonNull(center), 2).x();
+		double centerX = sizeEqual(notNull(center), 2).x();
 		double centerY = center.y();
 
 		double cos = (double)Math.cos(angle);
@@ -222,7 +222,7 @@ public class Matrix {
 	}
 
 	public static Matrix translation(Vector vector) {
-		Matrix translation = identity(nonNull(vector).size()+1);
+		Matrix translation = identity(notNull(vector).size()+1);
 		for (int i = 0; i < vector.size(); i++) {
 			translation.values[vector.size()][i] = vector.get(i);
 		}
@@ -230,9 +230,9 @@ public class Matrix {
 	}
 
 	public static Matrix homothety2D(Vector center, Vector scale) {
-		double centerX = sizeEqual(nonNull(center), 2).x();
+		double centerX = sizeEqual(notNull(center), 2).x();
 		double centerY = center.y();
-		double scaleX = sizeEqual(nonNull(scale), 2).x();
+		double scaleX = sizeEqual(notNull(scale), 2).x();
 		double scaleY = scale.y();
 
 		Matrix homothety = new Matrix(3, 3);
@@ -262,7 +262,7 @@ public class Matrix {
 	 * @return
 	 */
 	public static Matrix projection2D(Rectangle rectangle) {
-		double centerX = nonNull(rectangle).pos.x();
+		double centerX = notNull(rectangle).pos.x();
 		double centerY = rectangle.pos.y();
 
 		double scaleX = 2./(rectangle.diag.x());
