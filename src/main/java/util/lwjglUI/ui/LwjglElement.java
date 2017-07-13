@@ -5,11 +5,12 @@ import util.math.Transform;
 import util.math.shape.shape2d.Rectangle;
 import util.ui.UIContainer;
 import util.ui.UIElement;
+import util.ui.UIObject;
 
 /**
  * Created by esia on 19/06/17.
  */
-public abstract class LwjglElement extends UIElement {
+public abstract class LwjglElement implements UIObject {
 	protected final UIElement ui;
 
 	public LwjglElement(UIElement ui) {

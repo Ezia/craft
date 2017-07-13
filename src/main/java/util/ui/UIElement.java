@@ -8,7 +8,7 @@ import util.math.shape.shape2d.Rectangle;
  *
  * @param <T> The "real" type of UIElement.
  */
-public abstract class UIElement {
+public abstract class UIElement implements UIObject {
 
 	private UIContainer parent = null;
 	public final Transform transform = new Transform(2, 2);

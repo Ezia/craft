@@ -7,10 +7,11 @@ import util.math.Vector;
 import util.math.shape.shape2d.Rectangle;
 import util.ui.UIContainer;
 import util.ui.UIElement;
+import util.ui.UIObject;
 
 import java.util.Arrays;
 
-public class UITable<T extends UIElement> extends UIContainer {
+public class UITable<T extends UIObject> extends UIContainer {
 
 	private Table<T> table;
 	private Table<Transform> transforms;
