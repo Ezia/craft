@@ -31,10 +31,10 @@ public class Main {
 
         LwjglTable tab = new LwjglTable(2, 2);
         LwjglTable tab1 = new LwjglTable(2, 2);
-        tab1.set(0, 0, rec);
-        tab1.set(1, 1, rec1);
-        tab.set(1, 0, tab1);
-        tab.set(1, 1, rec2);
+        tab1.getUITable().set(0, 0, rec);
+        tab1.getUITable().set(1, 1, rec1);
+        tab.getUITable().set(1, 0, tab1);
+        tab.getUITable().set(1, 1, rec2);
 
         LwjglWindow win = new LwjglWindow(windowBox , "Craft");
 

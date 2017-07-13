@@ -9,19 +9,23 @@ import util.ui.container.UITable;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 
-public class LwjglTable extends UITable<LwjglObject> implements LwjglObject {
+public class LwjglTable extends LwjglObject {
 
 	public LwjglTable(int lineNbr, int columnNbr) {
-		super(lineNbr, columnNbr);
+		super(new UITable<LwjglObject>(lineNbr, columnNbr));
+	}
+
+	public UITable<LwjglObject> getUITable() {
+		return (UITable<LwjglObject>)ui;
 	}
 
 	@Override
 	public void draw(LwjglWindow window) {
-		update();
-		for (int i = 0; i < lineNbr(); ++i)  {
-			for (int j = 0; j < columnNbr(); ++j)  {
-				if (get(i, j) != null) {
-					get(i, j).draw(window);
+		getUITable().update();
+		for (int i = 0; i < getUITable().lineNbr(); ++i)  {
+			for (int j = 0; j < getUITable().columnNbr(); ++j)  {
+				if (getUITable().get(i, j) != null) {
+					getUITable().get(i, j).draw(window);
 				}
 			}
 		}

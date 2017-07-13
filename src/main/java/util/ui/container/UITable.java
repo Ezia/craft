@@ -99,7 +99,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 		upToDate = false;
 	}
 
-	protected void update() {
+	public void update() {
 		if (!upToDate) {
 			for (int i = 0; i < lineNbr(); ++i) {
 				if (!lineUpToData[i]) {

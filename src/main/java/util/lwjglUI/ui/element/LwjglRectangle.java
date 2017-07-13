@@ -19,7 +19,7 @@ import util.math.Vector;
 
 import java.util.TreeMap;
 
-public class LwjglRectangle extends UIRectangle implements LwjglObject {
+public class LwjglRectangle extends LwjglObject {
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
 	protected LwjglVertexBuffer vertexColorBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
@@ -29,7 +29,7 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 	private boolean init = false;
 
 	public LwjglRectangle(Vector dimension, Vector color) {
-		super(dimension, color);
+		super(new UIRectangle(dimension, color));
 	}
 
 	private void updateBuffers(LwjglProgram program) {
@@ -43,14 +43,14 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 				float[] colors = new float[4*4];
 				short[] indices = {0, 2, 1, 3};
 
-				Vector a = shape.pos;
-				Vector b = shape.pos.add(shape.diag);
+				Vector a = getUIRectangle().shape.pos;
+				Vector b = getUIRectangle().shape.pos.add(getUIRectangle().shape.diag);
 
 				for (int i = 0; i < 4; i++) {
-					colors[4*i + 0] = (float)color.x();
-					colors[4*i + 1] = (float)color.y();
-					colors[4*i + 2] = (float)color.z();
-					colors[4*i + 3] = (float)color.w();
+					colors[4*i + 0] = (float)getUIRectangle().color.x();
+					colors[4*i + 1] = (float)getUIRectangle().color.y();
+					colors[4*i + 2] = (float)getUIRectangle().color.z();
+					colors[4*i + 3] = (float)getUIRectangle().color.w();
 				}
 
 				positions[2*0+0] = (float)a.x();
@@ -118,7 +118,7 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		this.indexBuffer.bind();
 
 		int model = glGetUniformLocation(program.get(), "model");
-		glUniformMatrix3fv(model, false, transform.globalMatrix().getFloatColumnArray());
+		glUniformMatrix3fv(model, false, getUIRectangle().transform.globalMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
 
@@ -126,5 +126,9 @@ public class LwjglRectangle extends UIRectangle implements LwjglObject {
 		vertexArray.unbind();
 
 		program.unuse();
+	}
+
+	public UIRectangle getUIRectangle() {
+		return (UIRectangle)ui;
 	}
 }
