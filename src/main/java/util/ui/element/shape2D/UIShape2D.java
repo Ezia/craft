@@ -1,9 +1,9 @@
 package util.ui.element.shape2D;
 
 import util.math.shape.shape2d.Rectangle;
-import util.ui.UIElement;
 import util.math.shape.Shape2D;
 import util.math.Vector;
+import util.ui.UIElement;
 
 public abstract class UIShape2D<T extends Shape2D> extends UIElement {
 

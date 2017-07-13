@@ -1,22 +1,20 @@
 package util.lwjglUI.ui.container;
 
-import util.lwjglUI.shaderProgram.LwjglProgram;
-import util.lwjglUI.shaderProgram.LwjglProgramException;
-import util.lwjglUI.ui.LwjglObject;
+import util.lwjglUI.ui.LwjglElement;
 import util.lwjglUI.ui.topObjects.LwjglWindow;
 import util.ui.container.UITable;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 
-public class LwjglTable extends LwjglObject {
+public class LwjglTable extends LwjglElement {
 
 	public LwjglTable(int lineNbr, int columnNbr) {
-		super(new UITable<LwjglObject>(lineNbr, columnNbr));
+		super(new UITable<LwjglElement>(lineNbr, columnNbr));
 	}
 
-	public UITable<LwjglObject> getUITable() {
-		return (UITable<LwjglObject>)ui;
+	public UITable<LwjglElement> getUITable() {
+		return (UITable<LwjglElement>)ui;
 	}
 
 	@Override

@@ -8,18 +8,15 @@ import static org.lwjgl.opengl.GL20.*;
 import util.lwjglUI.buffer.LwjglIndexBuffer;
 import util.lwjglUI.buffer.LwjglVertexBuffer;
 import util.lwjglUI.shaderProgram.LwjglProgram;
-import util.lwjglUI.shaderProgram.LwjglProgramException;
 import util.lwjglUI.shaderProgram.LwjglProgramPreset;
-import util.lwjglUI.ui.LwjglObject;
+import util.lwjglUI.ui.LwjglElement;
 import util.lwjglUI.ui.topObjects.LwjglWindow;
 import util.lwjglUI.vertexArray.LwjglVertexArray;
 import util.lwjglUI.vertexArray.LwjglVertexArrayException;
 import util.ui.element.shape2D.UIRectangle;
 import util.math.Vector;
 
-import java.util.TreeMap;
-
-public class LwjglRectangle extends LwjglObject {
+public class LwjglRectangle extends LwjglElement {
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
 	protected LwjglVertexBuffer vertexColorBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;

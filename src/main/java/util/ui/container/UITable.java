@@ -6,11 +6,11 @@ import util.math.Transform;
 import util.math.Vector;
 import util.math.shape.shape2d.Rectangle;
 import util.ui.UIContainer;
-import util.ui.UIObject;
+import util.ui.UIElement;
 
 import java.util.Arrays;
 
-public class UITable<T extends UIObject> extends UIContainer<T> {
+public class UITable<T extends UIElement> extends UIContainer {
 
 	private Table<T> table;
 	private Table<Transform> transforms;
@@ -146,7 +146,7 @@ public class UITable<T extends UIObject> extends UIContainer<T> {
 	}
 
 	@Override
-	public void remove(UIObject child) {
+	public void remove(UIElement child) {
 		for (int i = 0; i < lineNbr(); i++) {
 			for (int j = 0; j < columnNbr(); ++j) {
 				if (get(i, j) == child) {

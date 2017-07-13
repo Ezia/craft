@@ -1,11 +1,10 @@
 package util.lwjglUI.ui.topObjects;
 
 import util.lwjglUI.shaderProgram.*;
-import util.lwjglUI.ui.LwjglObject;
+import util.lwjglUI.ui.LwjglElement;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
-import util.lwjglUI.vertexArray.LwjglVertexArray;
 import util.ui.topContainers.UIWindow;
 import util.math.Matrix;
 import util.math.shape.shape2d.Rectangle;
@@ -20,10 +19,9 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL41.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class LwjglWindow extends UIWindow<LwjglObject, LwjglLayer> {
+public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 	private long window = 0;
 
 	private LinkedList<LwjglProgram> programs = new LinkedList<>();

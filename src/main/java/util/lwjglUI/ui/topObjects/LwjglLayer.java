@@ -1,20 +1,14 @@
 package util.lwjglUI.ui.topObjects;
 
 
-import util.lwjglUI.shaderProgram.LwjglProgram;
 import util.lwjglUI.shaderProgram.LwjglProgramException;
-import util.lwjglUI.ui.LwjglObject;
-import util.lwjglUI.vertexArray.LwjglVertexArrayException;
-import util.math.Matrix;
-import util.math.Vector;
-import util.math.shape.shape2d.Rectangle;
+import util.lwjglUI.ui.LwjglElement;
 import util.ui.topContainers.UILayer;
 
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
-import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniformMatrix3fv;
 
-public class LwjglLayer extends UILayer<LwjglObject> {
+public class LwjglLayer extends UILayer<LwjglElement> {
 
 	public void draw(LwjglWindow window) throws LwjglProgramException {
 //		switch (program.preset) {

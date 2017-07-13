@@ -1,30 +1,28 @@
 package util.lwjglUI.ui;
 
-import util.lwjglUI.shaderProgram.LwjglProgram;
-import util.lwjglUI.shaderProgram.LwjglProgramException;
 import util.lwjglUI.ui.topObjects.LwjglWindow;
 import util.math.Transform;
 import util.math.shape.shape2d.Rectangle;
-import util.ui.UIObject;
-import util.ui.UIParent;
+import util.ui.UIContainer;
+import util.ui.UIElement;
 
 /**
  * Created by esia on 19/06/17.
  */
-public abstract class LwjglObject implements UIObject {
-	protected final UIObject ui;
+public abstract class LwjglElement extends UIElement {
+	protected final UIElement ui;
 
-	public LwjglObject(UIObject ui) {
+	public LwjglElement(UIElement ui) {
 		this.ui = ui;
 	}
 
 	@Override
-	public UIParent getParent() {
+	public UIContainer getParent() {
 		return ui.getParent();
 	}
 
 	@Override
-	public void setParent(UIParent parent) {
+	public void setParent(UIContainer parent) {
 		ui.setParent(parent);
 	}
 
@@ -53,7 +51,7 @@ public abstract class LwjglObject implements UIObject {
 		return ui.getGlobalBoundingBox();
 	}
 
-	public UIObject getUIObject() {
+	public UIElement getUIObject() {
 		return ui;
 	}
 
