@@ -1,8 +1,8 @@
 package util.math;
 
+import static util.Test.*;
+
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 public class Vector {
 
@@ -10,56 +10,46 @@ public class Vector {
 
 	private final double[] values;
 
-	///// OBJECT FUNCTIONS /////
-
-	@Override
-	public boolean equals(Object vector) {
-		assert(Vector.class.isInstance(vector));
-		return Arrays.equals(this.values, ((Vector)vector).values);
-	}
-
-	@Override
-	public String toString() {
-		return Arrays.toString(this.values);
-	}
-
 	///// CONSTRUCTORS /////
 
-	public Vector(int size) {
-		assert(size > 0);
-		this.values = new double[size];
-	}
-
 	public Vector(int size, double initValue) {
-		assert(size > 0);
-		this.values = new double[size];
+		this.values = new double[greater(size, 0)];
 		for (int i = 0; i < size; i++) {
 			this.values[i] = initValue;
 		}
 	}
 
-	public Vector(int size, Vector vector) {
-		assert(size > 0 && vector.values.length >= size);
-		this.values = Arrays.copyOf(vector.values, size);
-	}
-
 	public Vector(int size, double[] values) {
-		assert(size > 0 && values.length >= size);
-		this.values = Arrays.copyOf(values, size);
-	}
-
-	public Vector(double ... values) {
-		assert(values.length > 0);
-		this.values = Arrays.copyOf(values, values.length);
-	}
-
-	public Vector(Vector vector) {
-		this.values = Arrays.copyOf(vector.values, vector.values.length);
+		this.values = new double[range(size, 1, nonNull(values).length+1)];
+		for (int i = 0; i < size; i++) {
+			this.values[i] = values[i];
+		}
 	}
 
 	public Vector(Vector vector, double ... endValues) {
-		this.values = DoubleStream.concat(Arrays.stream(vector.values), Arrays.stream(endValues))
-				.toArray();
+		this.values = new double[nonNull(vector).size() + nonNull(endValues).length];
+		for (int i = 0; i < vector.size(); i++) {
+			this.values[i] = vector.values[i];
+		}
+		for (int i = 0; i < endValues.length; i++) {
+			this.values[vector.size() + i] = endValues[i];
+		}
+	}
+
+	public Vector(int size) {
+		this(size, 0.);
+	}
+
+	public Vector(int size, Vector vector) {
+		this(size, nonNull(vector).values);
+	}
+
+	public Vector(double ... values) {
+		this(nonNull(values).length, values);
+	}
+
+	public Vector(Vector vector) {
+		this(nonNull(vector).size(), vector.values);
 	}
 
 	///// ACCESSORS /////
@@ -69,50 +59,48 @@ public class Vector {
 	}
 
 	public double get(int i) {
-		assert(i >= 0 && i < size());
-		return this.values[i];
+		return this.values[range(i, 0, size())];
 	}
 
 	public double x() {
-		assert(size() >= 2 && size() <= 4);
-		return get(0);
+		return this.values[0];
 	}
 
 	public double y() {
-		assert(size() >= 2 && size() <= 4);
-		return get(1);
+		sizeGreaterOrEqual(this, 2);
+		return this.values[1];
 	}
 
 	public double z() {
-		assert(size() >= 3 && size() <= 4);
-		return get(2);
+		sizeGreaterOrEqual(this, 3);
+		return this.values[2];
 	}
 
 	public double w() {
-		assert(size() == 4);
-		return get(3);
+		sizeGreaterOrEqual(this, 2);
+		return this.values[size()-1];
 	}
 
 	public double norm2() {
 		double norm2 = 0;
 		for (int i = 0; i < this.size(); ++i) {
-			norm2 += this.get(i);
+			norm2 += this.values[i];
 		}
 		return norm2;
 	}
 
 	public double norm() {
-		return (double)Math.sqrt(norm2());
+		return Math.sqrt(this.norm2());
 	}
 
-	public double[] getArray() {
-		return Arrays.copyOf(values, values.length);
+	public double[] getDoubleArray() {
+		return Arrays.copyOf(this.values, this.values.length);
 	}
 
 	public float[] getFloatArray() {
-		float[] array = new float[size()];
-		for (int i = 0; i < size(); ++i) {
-			array[i] = (float)get(i);
+		float[] array = new float[this.size()];
+		for (int i = 0; i < this.size(); ++i) {
+			array[i] = (float)this.values[i];
 		}
 		return array;
 	}
@@ -146,159 +134,138 @@ public class Vector {
 
 	///// OPERATIONS /////
 
-	public Vector cross(Vector vect) {
-		assert(size() == 3 && vect.size() == 3);
+	public Vector cross(Vector vector) {
+		sizeEqual(this, nonNull(vector));
 		return new Vector(
-				y()*vect.z() - z()*vect.y(),
-				z()*vect.x() - x()*vect.z(),
-				x()*vect.y() - y()*vect.x()
+				this.y()*vector.z() - this.z()*vector.y(),
+				this.z()*vector.x() - this.x()*vector.z(),
+				this.x()*vector.y() - this.y()*vector.x()
 		);
 	}
 
-	public double dot(Vector vect) {
-		assert (size() == vect.size());
+	public double dot(Vector vector) {
+		sizeEqual(this, nonNull(vector));
 		double result = 0;
-		for (int i = 0; i < size(); i++) {
-			result += get(i) * vect.get(i);
+		for (int i = 0; i < this.size(); i++) {
+			result += this.values[i] * vector.values[i];
 		}
 		return result;
 	}
 
-	public Vector rightMult(Matrix mat) {
-		assert(mat.columnNbr() == size());
-		Vector result = new Vector(mat.lineNbr());
-		for (int l = 0; l < mat.lineNbr(); ++l) {
+	public Vector times(Matrix matrix) {
+		equal(nonNull(matrix.lineNbr()), this.size());
+		Vector result = new Vector(matrix.columnNbr());
+		for (int c = 0; c < matrix.columnNbr(); ++c) {
 			double value = 0;
-			for (int c = 0; c < mat.columnNbr(); ++c) {
-				value += mat.get(l, c) * get(c);
+			for (int l = 0; l < matrix.lineNbr(); ++l) {
+				value += matrix.get(l, c) * this.values[l];
 			}
-			result.set(l, value);
+			result.values[c] = value;
 		}
 		return result;
 	}
-
-	public Vector leftMult(Matrix mat) {
-		assert(mat.lineNbr() == size());
-		Vector result = new Vector(mat.columnNbr());
-		for (int c = 0; c < mat.columnNbr(); ++c) {
-			double value = 0;
-			for (int l = 0; l < mat.lineNbr(); ++l) {
-				value += mat.get(l, c) * get(l);
-			}
-			result.set(c, value);
-		}
-		return result;
-	}
-
 
 	public Vector add(Vector vector) {
-		assert(vector.size() == size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, get(i) + vector.get(i));
+		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = this.values[i] + vector.values[i];
 		}
 		return result;
 	}
 
 	public Vector add(double factor) {
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, get(i) + factor);
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = this.values[i] + factor;
 		}
 		return result;
 	}
 
 	public Vector sub(Vector vector) {
-		assert(vector.size() == size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, get(i) - vector.get(i));
+		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = this.values[i] - vector.values[i];
 		}
 		return result;
 	}
 
-	public Vector wiseMult(Vector vector) {
-		assert(vector.size() == size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, get(i) * vector.get(i));
+	public Vector wiseTimes(Vector vector) {
+		Vector result = new Vector(equal(nonNull(vector).size(), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = this.values[i] * vector.values[i];
 		}
 		return result;
 	}
 
-	public Vector mult(double factor) {
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, get(i) * factor);
+	public Vector times(double factor) {
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = this.values[i] * factor;
 		}
 		return result;
 	}
 
 	public Vector capMax(Vector cap) {
-		assert(cap.size() == size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, Math.min(get(i), cap.get(i)));
+		Vector result = new Vector(equal(nonNull(cap).size(), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = Math.min(this.values[i], cap.values[i]);
 		}
 		return result;
 	}
 
 	public Vector capMin(Vector cap) {
-		assert(cap.size() == size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, Math.max(get(i), cap.get(i)));
+		Vector result = new Vector(equal(nonNull(cap).size(), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = Math.max(this.values[i], cap.values[i]);
 		}
 		return result;
 	}
 
 	public Vector capMax(double cap) {
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, Math.min(get(i), cap));
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = Math.min(this.values[i], cap);
 		}
 		return result;
 	}
 
 	public Vector capMin(double cap) {
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, Math.max(get(i), cap));
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = Math.max(this.values[i], cap);
 		}
 		return result;
 	}
 
 	public Vector clamp(double min, double max) {
-		assert(min <= max);
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			result.set(i, Math.min(Math.max(get(i), min), max));
+		lessOrEqual(min, max);
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = Math.min(Math.max(this.values[i], min), max);
 		}
 		return result;
 	}
 
 	public Vector clamp(Vector min, Vector max) {
-		assert(size() == max.size() && size() == min.size());
-		Vector result = new Vector(size());
-		for (int i = 0; i < size(); i++) {
-			assert(min.get(i) <= max.get(i));
-			result.set(i, Math.min(Math.max(get(i), min.get(i)), max.get(i)));
+		Vector result = new Vector(equal(equal(nonNull(min).size(), nonNull(max).size()), this.size()));
+		for (int i = 0; i < this.size(); i++) {
+			lessOrEqual(min.values[i], max.values[i]);
+			result.values[i] = Math.min(Math.max(this.values[i], min.values[i]), max.values[i]);
 		}
 		return result;
 	}
 
-	public Vector setNorm(double norm) {
-		assert(norm > 0);
-		return mult(norm/norm());
+	public Vector normalize(double norm) {
+		return this.times(greaterOrEqual(norm, 0.)/this.norm());
 	}
 
 	public Vector normalize() {
-		return setNorm(1);
+		return this.normalize(1.);
 	}
 
 	public Vector homogenize() {
-		assert(size() >= 2);
-		return mult(1/get(size()-2));
+		sizeGreaterOrEqual(this, 2);
+		return this.times(1/this.values[this.size()-1]);
 	}
 }
 

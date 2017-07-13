@@ -1,39 +1,19 @@
 package util.math;
 
+import static util.Test.*;
 import util.shape.Rectangle;
 
-import java.util.Arrays;
 
 public class Matrix {
 
 	///// FIELDS /////
 
-	private double[][] values;
+	private final double[][] values;
 
 	///// CONSTRUCTORS /////
 
-	public Matrix(Matrix matrix) {
-		this.values = Arrays.copyOf(matrix.values, matrix.size());
-	}
-
-	public Matrix(int lineNbr, int columnNbr, Matrix matrix) {
-		assert(columnNbr > 0 && lineNbr > 0);
-		this.values = new double[lineNbr][columnNbr];
-		for (int l = 0; l < lineNbr; ++l) {
-			for (int c = 0; c < columnNbr; ++c) {
-				this.values[l][c] = matrix.values[l][c];
-			}
-		}
-	}
-
-	public Matrix(int lineNbr, int columnNbr) {
-		assert(columnNbr > 0 && lineNbr > 0);
-		this.values = new double[lineNbr][columnNbr];
-	}
-
 	public Matrix(int lineNbr, int columnNbr, double initValue) {
-		assert(columnNbr > 0 && lineNbr > 0);
-		this.values = new double[lineNbr][columnNbr];
+		this.values = new double[greater(lineNbr, 0)][greater(columnNbr, 0)];
 		for (int l = 0; l < lineNbr; ++l) {
 			for (int c = 0; c < columnNbr; ++c) {
 				this.values[l][c] = initValue;
@@ -41,70 +21,54 @@ public class Matrix {
 		}
 	}
 
-	/**
-	 *
-	 * @param lineNbr
-	 * @param columnNbr
-	 * @param values Concatenation of matrix lines
-	 */
-	public Matrix(int lineNbr, int columnNbr, double[] values) {
-		assert(columnNbr > 0 && lineNbr > 0 && values.length == columnNbr*lineNbr);
-		this.values = new double[lineNbr][columnNbr];
-		for (int l = 0; l < lineNbr; ++l) {
-			for (int c = 0; c < columnNbr; ++c) {
-				this.values[l][c] = values[l*columnNbr + c];
-			}
-		}
-	}
-
-	public Matrix(double[][] values) {
-		assert(values.length > 0 && values[0].length > 0);
-		this.values = new double[values.length][values[0].length];
-		for (int l = 0; l < values.length; ++l) {
-			for (int c = 0; c < values[0].length; ++c) {
-				this.values[l][c] = values[l][c];
-			}
-		}
-	}
-
 	public Matrix(int lineNbr, int columnNbr, double[][] values) {
-		assert(lineNbr > 0 && columnNbr > 0
-				&& values.length <= lineNbr && values[0].length <= columnNbr
-		);
-		this.values = new double[lineNbr][columnNbr];
+		this.values = new double[range(lineNbr, 1, nonNull(values).length+1)]
+				[greater(columnNbr, 0)];
 		for (int l = 0; l < lineNbr; ++l) {
+			lessOrEqual(columnNbr, values[l].length);
 			for (int c = 0; c < columnNbr; ++c) {
 				this.values[l][c] = values[l][c];
 			}
 		}
+	}
+
+	public Matrix(int lineNbr, int columnNbr, Matrix matrix) {
+		this(lineNbr, columnNbr, nonNull(matrix).values);
+	}
+
+	public Matrix(int lineNbr, int columnNbr) {
+		this(lineNbr, columnNbr, 0.);
 	}
 
 	public Matrix(int size) {
-		assert(size > 0);
-		this.values = new double[size][size];
+		this(size, size, 0.);
+	}
+
+	public Matrix(Matrix matrix) {
+		this(nonNull(matrix).lineNbr(), matrix.columnNbr(), matrix);
+	}
+
+	public Matrix(double[][] values) {
+		this(greater(nonNull(values).length, 0), values[0].length, values);
 	}
 
 	///// ACCESSORS /////
 
 	public int lineNbr() {
-		return values.length;
+		return this.values.length;
 	}
 
 	public int columnNbr() {
-		return values[0].length;
-	}
-
-	public int size() {
-		return lineNbr()*columnNbr();
+		return this.values[0].length;
 	}
 
 	public double get(int l, int c) {
-		assert(l >= 0 && l < lineNbr() && c >= 0 && c < columnNbr());
-		return values[l][c];
+		return this.values[range(l, 0, this.lineNbr())]
+				[range(c, 0, this.columnNbr())];
 	}
 
 	public boolean isSquare() {
-		return lineNbr() == columnNbr();
+		return this.lineNbr() == this.columnNbr();
 	}
 
 	public boolean isInvertible() {
@@ -113,20 +77,20 @@ public class Matrix {
 	}
 
 	public float[] getFloatLineArray() {
-		float[] array = new float[lineNbr()*columnNbr()];
-		for (int l = 0; l < lineNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				array[l*columnNbr() + c] = (float)get(l, c);
+		float[] array = new float[this.lineNbr()*this.columnNbr()];
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				array[l*this.columnNbr() + c] = (float)this.values[l][c];
 			}
 		}
 		return array;
 	}
 
 	public float[] getFloatColumnArray() {
-		float[] array = new float[lineNbr()*columnNbr()];
-		for (int l = 0; l < lineNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				array[c*lineNbr() + l] = (float)get(l, c);
+		float[] array = new float[this.lineNbr()*this.columnNbr()];
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				array[c*this.lineNbr() + l] = (float)this.values[l][c];
 			}
 		}
 		return array;
@@ -135,17 +99,17 @@ public class Matrix {
 	///// MODIFIERS /////
 
 	private void set(int l, int c, double value) {
-		assert(l >= 0 && l < lineNbr() && c >= 0 && c < columnNbr());
-		values[l][c] = value;
+		values[range(l, 0, this.lineNbr())]
+				[range(c, 0, this.columnNbr())] = value;
 	}
 
 	///// OPERATIONS /////
 
 	public Matrix transpose() {
-		Matrix transpose = new Matrix(columnNbr(), lineNbr());
-		for (int l = 0; l < lineNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				transpose.set(c, l, get(l, c));
+		Matrix transpose = new Matrix(this.columnNbr(), this.lineNbr());
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				transpose.values[c][l] = this.values[l][c];
 			}
 		}
 		return transpose;
@@ -156,54 +120,55 @@ public class Matrix {
 		return null;
 	}
 
-	public Matrix rightMult(Matrix mat) {
-		assert(columnNbr() == mat.lineNbr());
-		Matrix result = new Matrix(lineNbr(), mat.columnNbr());
-		for (int l1 = 0; l1 < lineNbr(); ++l1) {
-			for (int c2 = 0; c2 < mat.columnNbr(); ++c2) {
+	/**
+	 * this * mat
+	 * @param mat
+	 * @return
+	 */
+	public Matrix times(Matrix matrix) {
+		equal(this.columnNbr(), nonNull(matrix).lineNbr());
+		Matrix result = new Matrix(this.lineNbr(), matrix.columnNbr());
+		for (int l1 = 0; l1 < this.lineNbr(); ++l1) {
+			for (int c2 = 0; c2 < matrix.columnNbr(); ++c2) {
 				double value = 0;
-				for (int x = 0; x < mat.lineNbr(); ++x) {
-					value += get(l1, x) * mat.get(x, c2);
+				for (int x = 0; x < matrix.lineNbr(); ++x) {
+					value += this.values[l1][x] * matrix.values[x][c2];
 				}
-				result.set(l1, c2, value);
+				result.values[l1][c2] = value;
 			}
 		}
 		return result;
 	}
 
-	public Matrix leftMult(Matrix mat) {
-		assert(mat.columnNbr() == lineNbr());
-		Matrix result = new Matrix(mat.lineNbr(), columnNbr());
-		for (int l1 = 0; l1 < mat.lineNbr(); ++l1) {
-			for (int c2 = 0; c2 < columnNbr(); ++c2) {
-				double value = 0;
-				for (int x = 0; x < lineNbr(); ++x) {
-					value += mat.get(l1, x) * get(x, c2);
-				}
-				result.set(l1, c2, value);
+	public Vector times(Vector vector) {
+		equal(this.columnNbr(), nonNull(vector).size());
+		double[] result = new double[this.lineNbr()];
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			double value = 0;
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				value += this.values[l][c] * vector.get(c);
 			}
+			result[l] = value;
 		}
-		return result;
+		return new Vector(result);
 	}
 
 	public Matrix times(double value) {
-		Matrix result = new Matrix(lineNbr(), columnNbr());
-		for (int l = 0; l < lineNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				result.set(l, c, get(l, c) * value);
+		Matrix result = new Matrix(this.lineNbr(), this.columnNbr());
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				result.values[l][c] = this.values[l][c] * value;
 			}
 		}
 		return result;
 	}
 
-	public Matrix wiseMult(Matrix matrix) {
-		assert(matrix.lineNbr() == lineNbr()
-				&& matrix.columnNbr() == columnNbr()
-		);
-		Matrix result = new Matrix(lineNbr(), columnNbr());
-		for (int l = 0; l < lineNbr(); ++l) {
-			for (int c = 0; c < columnNbr(); ++c) {
-				result.set(l, c, get(l, c) * matrix.get(l, c));
+	public Matrix wiseTimes(Matrix matrix) {
+		Matrix result = new Matrix(equal(this.lineNbr(), nonNull(matrix).lineNbr()),
+				equal(this.columnNbr(), matrix.columnNbr()));
+		for (int l = 0; l < this.lineNbr(); ++l) {
+			for (int c = 0; c < this.columnNbr(); ++c) {
+				result.values[l][c] = this.values[l][c] * matrix.values[l][c];
 			}
 		}
 		return result;
@@ -214,16 +179,16 @@ public class Matrix {
 	// all left multiply matrices : V * M
 
 	public static Matrix identity(int size) {
-		return identity(size, size);
+		return identity(greater(size, 0), size);
 	}
 
 	public static Matrix identity(int lineNbr, int columnNbr) {
-		Matrix mat = new Matrix(lineNbr, columnNbr, 0);
+		Matrix identity = new Matrix(greater(lineNbr, 0), greater(columnNbr, 0), 0);
 		int minDim = Math.min(lineNbr, columnNbr);
 		for (int x = 0; x < minDim; ++x) {
-			mat.values[x][x] = 1;
+			identity.values[x][x] = 1;
 		}
-		return mat;
+		return identity;
 	}
 
 	/**
@@ -233,58 +198,89 @@ public class Matrix {
 	 * @return
 	 */
 	public static Matrix rotation2D(Vector center, double angle) {
-		assert(center.size() == 2);
-		Matrix mat = new Matrix(3, 3);
+		double centerX = sizeEqual(nonNull(center), 2).x();
+		double centerY = center.y();
+
 		double cos = (double)Math.cos(angle);
 		double sin = (double)Math.sin(angle);
-		double a = center.x();
-		double b = center.y();
-		mat.set(0,0,cos); 				mat.set(0,1,sin); 				mat.set(0,2,0);
-		mat.set(1,0,-sin); 				mat.set(1,1,cos);  				mat.set(1,2,0);
-		mat.set(2,0,-a*cos + b*sin + a); mat.set(2,1,-a*cos - b*sin + b); mat.set(2,2,1);
-		return mat;
+
+		Matrix rotation = new Matrix(3, 3);
+
+		rotation.values[0][0] = cos;
+		rotation.values[0][1] = sin;
+		rotation.values[0][2] = 0;
+
+		rotation.values[1][0] = -sin;
+		rotation.values[1][1] = cos;
+		rotation.values[1][2] = 0;
+
+		rotation.values[2][0] = -centerX*cos + centerY*sin + centerX;
+		rotation.values[2][1] = -centerX*cos - centerY*sin + centerY;
+		rotation.values[2][2] = 1;
+
+		return rotation;
 	}
 
-	public static Matrix translation(Vector translation) {
-//		double a = translation.x();
-//		double b = translation.y();
-//		Matrix mat = new Matrix(3, 3);
-//		mat.set(0,0,1); mat.set(0,1,0); mat.set(0,2,0);
-//		mat.set(1,0,0); mat.set(1,1,1); mat.set(1,2,0);
-//		mat.set(2,0,a); mat.set(2,1,b); mat.set(2,2,1);
-
-		Matrix result = identity(translation.size()+1);
-		for (int i = 0; i < translation.size(); i++) {
-			result.set(translation.size(), i, translation.get(i));
+	public static Matrix translation(Vector vector) {
+		Matrix translation = identity(nonNull(vector).size()+1);
+		for (int i = 0; i < vector.size(); i++) {
+			translation.values[vector.size()][i] = vector.get(i);
 		}
-		return result;
+		return translation;
 	}
 
 	public static Matrix homothety2D(Vector center, Vector scale) {
-		assert(scale.size() == 2 && center.size() == 2);
-		double a = center.x();
-		double b = center.y();
-		Matrix mat = new Matrix(3, 3);
-		mat.set(0,0,scale.x()); 	   mat.set(0,1,0); 				  mat.set(0,2,0);
-		mat.set(1,0,0); 			   mat.set(1,1,scale.y()); 		  mat.set(1,2,0);
-		mat.set(2,0,-a*scale.x() + a); mat.set(2,1,-b*scale.y() + b); mat.set(2,2,1);
-		return mat;
+		double centerX = sizeEqual(nonNull(center), 2).x();
+		double centerY = center.y();
+		double scaleX = sizeEqual(nonNull(scale), 2).x();
+		double scaleY = scale.y();
+
+		Matrix homothety = new Matrix(3, 3);
+
+		homothety.values[0][0] = scaleX;
+		homothety.values[0][1] = 0;
+		homothety.values[0][2] = 0;
+
+		homothety.values[1][0] = 0;
+		homothety.values[1][1] = scaleY;
+		homothety.values[1][2] = 0;
+
+		homothety.values[2][0] = -centerX*scaleX + centerX;
+		homothety.values[2][1] = -centerY*scaleY + centerY;
+		homothety.values[2][2] = 1;
+
+		return homothety;
+	}
+
+	public static Matrix homothety2D(Vector center, double scale) {
+		return homothety2D(center, new Vector(scale, scale));
 	}
 
 	/**
 	 * Move and scale the rectangle to be centered around (0,0) and range between -1 and 1 ox x and y
-	 * @param rect
+	 * @param rectangle
 	 * @return
 	 */
-	public static Matrix projection2D(Rectangle rect) {
-		Vector center = rect.pos;
-		double xScale = 1./(rect.diag.x());
-		double yScale = 1./(rect.diag.y());
-		Matrix mat = new Matrix(3, 3);
+	public static Matrix projection2D(Rectangle rectangle) {
+		double centerX = nonNull(rectangle).pos.x();
+		double centerY = rectangle.pos.y();
 
-		mat.set(0,0,xScale*2); mat.set(0,1,0); 		   mat.set(0,2,0);
-		mat.set(1,0,0); 	   mat.set(1,1,-yScale*2); mat.set(1,2,0);
-		mat.set(2,0,-1); 	   mat.set(2,1,1); 		   mat.set(2,2,1);
-		return mat;
+		double scaleX = 2./(rectangle.diag.x());
+		double scaleY = 2./(rectangle.diag.y());
+
+		Matrix projection = new Matrix(3, 3);
+
+		projection.values[0][0] = scaleX;
+		projection.values[0][1] = 0;
+		projection.values[0][2] = 0;
+
+		projection.values[1][0] = 0;
+		projection.values[1][1] = -scaleY;
+		projection.values[1][2] = 0;
+
+		projection.values[2][0] = -1 - scaleX*centerX;
+		projection.values[2][1] = 1 + scaleY*centerY;
+		projection.values[2][2] = 1;
+		return projection;
 	}
 }

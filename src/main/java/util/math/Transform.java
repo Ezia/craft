@@ -119,12 +119,12 @@ public class Transform {
 	}
 
 	public void preMultiply(Matrix mat) {
-		this.localMatrix = localMatrix.leftMult(mat);
+		this.localMatrix = mat.times(localMatrix);
 		setUpToDate(false);
 	}
 
 	public void postMultiply(Matrix mat) {
-		this.localMatrix = localMatrix.rightMult(mat);
+		this.localMatrix = localMatrix.times(mat);
 		setUpToDate(false);
 	}
 
@@ -133,7 +133,7 @@ public class Transform {
 			if (parent == null) {
 				globalMatrix = localMatrix;
 			} else {
-				globalMatrix = localMatrix.leftMult(parent.globalMatrix());
+				globalMatrix = parent.globalMatrix().times(localMatrix);
 			}
 		}
 		upToDate = true;
@@ -141,33 +141,30 @@ public class Transform {
 
 	public Vector apply(Vector vect) {
 		update();
-		return vect.leftMult(globalMatrix);
+		return vect.times(globalMatrix);
 	}
 
 	public Vector applyToPoint(Vector vect) {
 		update();
-		return new Vector(vect, 1).leftMult(globalMatrix);
+		return new Vector(vect, 1).times(globalMatrix);
 	}
 
 	public Vector applyToVector(Vector vect) {
 		update();
-		return new Vector(vect, 0).leftMult(globalMatrix);
+		return new Vector(vect, 0).times(globalMatrix);
 	}
 
 
 	public Vector applyLocal(Vector vect) {
-//		update();
-		return vect.leftMult(localMatrix);
+		return vect.times(localMatrix);
 	}
 
 	public Vector applyLocalToPoint(Vector vect) {
-//		update();
-		return new Vector(vect, 1).leftMult(localMatrix);
+		return new Vector(vect, 1).times(localMatrix);
 	}
 
 	public Vector applyLocalToVector(Vector vect) {
-//		update();
-		return new Vector(vect, 0).leftMult(localMatrix);
+		return new Vector(vect, 0).times(localMatrix);
 	}
 
 	public Rectangle applyToRectangle(Rectangle rect) {
