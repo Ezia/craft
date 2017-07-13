@@ -1,9 +1,9 @@
-import util.lwjglUI.ui.container.LwjglTable;
-import util.lwjglUI.ui.element.LwjglRectangle;
-import util.lwjglUI.ui.topObjects.LwjglLayer;
-import util.lwjglUI.ui.topObjects.LwjglWindow;
-import util.datastructure.AWTImage;
-import util.math.shape.shape2d.Rectangle;
+import view.lwjglUi.ui.container.LwjglTable;
+import view.lwjglUi.ui.element.LwjglRectangle;
+import view.lwjglUi.ui.topObjects.LwjglLayer;
+import view.lwjglUi.ui.topObjects.LwjglWindow;
+import view.awtUi.AWTImage;
+import util.shape.Rectangle;
 import util.math.Vector;
 
 public class Main {

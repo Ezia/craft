@@ -1,9 +1,8 @@
 package util.math;
 
-import util.math.shape.shape2d.Rectangle;
+import util.shape.Rectangle;
 
 import java.util.LinkedList;
-import java.util.TreeSet;
 
 public class Transform {
 
