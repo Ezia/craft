@@ -105,6 +105,18 @@ public class Vector {
 		return (double)Math.sqrt(norm2());
 	}
 
+	public double[] getArray() {
+		return Arrays.copyOf(values, values.length);
+	}
+
+	public float[] getFloatArray() {
+		float[] array = new float[size()];
+		for (int i = 0; i < size(); ++i) {
+			array[i] = (float)get(i);
+		}
+		return array;
+	}
+
 	///// MODIFIERS /////
 
 	private void set(int i, double value) {

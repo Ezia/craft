@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 
+import util.shape.Polygon;
+import util.shape.PolygonalChain;
 import view.lwjglUi.buffer.LwjglIndexBuffer;
 import view.lwjglUi.buffer.LwjglVertexBuffer;
 import view.lwjglUi.shaderProgram.LwjglProgram;
@@ -13,61 +15,34 @@ import view.lwjglUi.ui.LwjglElement;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.lwjglUi.vertexArray.LwjglVertexArray;
 import view.lwjglUi.vertexArray.LwjglVertexArrayException;
-import view.ui.element.shape2D.UIRectangle;
+import view.ui.element.shape2D.UIColoredPolygon;
 import util.math.Vector;
 
-public class LwjglRectangle extends LwjglElement {
+public class LwjglColoredPolygon extends LwjglElement {
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
-	protected LwjglVertexBuffer vertexColorBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
-
 	protected LwjglVertexArray vertexArray = null;
 
 	private boolean init = false;
 
-	public LwjglRectangle(Vector dimension, Vector color) {
-		super(new UIRectangle(dimension, color));
+	public LwjglColoredPolygon(Polygon poly, Vector color) {
+		super(new UIColoredPolygon(poly, color));
 	}
 
 	private void updateBuffers(LwjglProgram program) {
 		if (!init) {
 			try {
-				this.vertexColorBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
+				PolygonalChain chain = getUIColoredPolygon().getPolygon().getTriangleChain();
+
 				this.vertexPositionBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
-				this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
-
-				float[] positions = new float[4*2];
-				float[] colors = new float[4*4];
-				short[] indices = {0, 2, 1, 3};
-
-				Vector a = getUIRectangle().shape.pos;
-				Vector b = getUIRectangle().shape.pos.add(getUIRectangle().shape.diag);
-
-				for (int i = 0; i < 4; i++) {
-					colors[4*i + 0] = (float)getUIRectangle().color.x();
-					colors[4*i + 1] = (float)getUIRectangle().color.y();
-					colors[4*i + 2] = (float)getUIRectangle().color.z();
-					colors[4*i + 3] = (float)getUIRectangle().color.w();
-				}
-
-				positions[2*0+0] = (float)a.x();
-				positions[2*0+1] = (float)a.y();
-
-				positions[2*1+0] = (float)b.x();
-				positions[2*1+1] = (float)a.y();
-
-				positions[2*2+0] = (float)a.x();
-				positions[2*2+1] = (float)b.y();
-
-				positions[2*3+0] = (float)b.x();
-				positions[2*3+1] = (float)b.y();
-
+				float[] positions = chain.getFloatPointArray();
 				this.vertexPositionBuffer.set(positions);
-				this.vertexColorBuffer.set(colors);
+
+				this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
+				int[] indices = chain.getIndexArray();
 				this.indexBuffer.set(indices);
 
 				init = true;
-
 			} catch (Exception e) {
 				e.printStackTrace();
 				System.exit(1);
@@ -82,19 +57,10 @@ public class LwjglRectangle extends LwjglElement {
 			vertexArray.bind();
 
 			int positionAttrib = glGetAttribLocation(program.get(), "position");
-			int colorAttrib = glGetAttribLocation(program.get(), "color");
-
 			glEnableVertexAttribArray(positionAttrib);
-			glEnableVertexAttribArray(colorAttrib);
-
 			this.vertexPositionBuffer.bind();
 			glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, 0);
-
-			this.vertexColorBuffer.bind();
-			glVertexAttribPointer(colorAttrib, 4, GL_FLOAT, false, 0, 0);
-
 			this.vertexPositionBuffer.unbind();
-			this.vertexColorBuffer.unbind();
 
 			vertexArray.unbind();
 		} catch (LwjglVertexArrayException e) {
@@ -112,12 +78,17 @@ public class LwjglRectangle extends LwjglElement {
 		updateVertexArray(program);
 
 		vertexArray.bind();
-		this.indexBuffer.bind();
+		indexBuffer.bind();
+
+		int colorPos = glGetUniformLocation(program.get(), "color");
+		glUniform4fv(colorPos, getUIColoredPolygon().color.getFloatArray());
 
 		int model = glGetUniformLocation(program.get(), "model");
-		glUniformMatrix3fv(model, false, getUIRectangle().transform.globalMatrix().getFloatColumnArray());
+		glUniformMatrix3fv(model, false, getUIColoredPolygon().transform.globalMatrix().getFloatColumnArray());
 
-		glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLE_STRIP,
+				getUIColoredPolygon().getPolygon().getPolygonalChain().getIndexNbr(),
+				GL_UNSIGNED_INT, 0);
 
 		this.indexBuffer.unbind();
 		vertexArray.unbind();
@@ -125,7 +96,8 @@ public class LwjglRectangle extends LwjglElement {
 		program.unuse();
 	}
 
-	public UIRectangle getUIRectangle() {
-		return (UIRectangle)ui;
+	public UIColoredPolygon getUIColoredPolygon() {
+		return (UIColoredPolygon)ui;
 	}
+
 }

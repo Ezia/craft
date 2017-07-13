@@ -2,24 +2,26 @@ package util.shape;
 
 import util.math.Vector;
 
-public class Circle extends Shape {
+public class Circle implements Shape {
 
+	public final Vector pos;
 	public final float radius;
 
 	Circle(Circle circle) {
-		super(circle.pos);
-		radius = circle.radius;
+		this.pos = circle.pos;
+		this.radius = circle.radius;
 	}
 
 	public Circle(Vector pos, float radius) {
-		super(pos);
+		assert(radius > 0);
+		this.pos = pos;
 		this.radius = radius;
 	}
 
 	@Override
 	public Rectangle getBoundingBox() {
 		return new Rectangle(
-				pos,
+				pos.sub(new Vector(-radius, -radius)),
 				new Vector(2*radius, 2*radius)
 		);
 	}

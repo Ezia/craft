@@ -2,9 +2,10 @@
 
 uniform mat3 proj;
 uniform mat3 model;
+uniform vec4 color;
 
 in vec2 position;
-in vec4 color;
+//in vec4 color;
 
 out vec4 colorF;
 

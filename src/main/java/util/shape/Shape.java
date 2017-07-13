@@ -2,13 +2,11 @@ package util.shape;
 
 import util.math.Vector;
 
-public abstract class Shape {
-	public final Vector pos;
-
-	public Shape(Vector pos) {
-		assert(pos.size() == 2);
-		this.pos = pos;
-	}
-
+/**
+ * Origine is top left
+ * horizontal axis directed down is x axis
+ * vertical axis directed right is y axis
+ */
+public interface Shape {
 	public abstract Rectangle getBoundingBox();
 }

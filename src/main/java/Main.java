@@ -1,5 +1,5 @@
 import view.lwjglUi.ui.container.LwjglTable;
-import view.lwjglUi.ui.element.LwjglRectangle;
+import view.lwjglUi.ui.element.LwjglColoredPolygon;
 import view.lwjglUi.ui.topObjects.LwjglLayer;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.awtUi.AWTImage;
@@ -23,11 +23,22 @@ public class Main {
                 new Vector(500., 500.)
         );
 
-        LwjglRectangle rec = new LwjglRectangle(new Vector(250., 250.), new Vector(1., 1., 1., 0.3));
 
-        LwjglRectangle rec1 = new LwjglRectangle(new Vector(100., 100.), new Vector(0., 1., 1., 0.3));
 
-        LwjglRectangle rec2 = new LwjglRectangle(new Vector(50., 50.), new Vector(1., 0., 1., 0.3));
+        LwjglColoredPolygon rec = new LwjglColoredPolygon(
+                new Rectangle(new Vector(0., 0.), new Vector(250., 250.)),
+                new Vector(1., 1., 1., 0.3)
+        );
+
+        LwjglColoredPolygon rec1 = new LwjglColoredPolygon(
+                new Rectangle(new Vector(0., 0.), new Vector(100., 100.)),
+                new Vector(0., 1., 1., 0.3)
+        );
+
+        LwjglColoredPolygon rec2 = new LwjglColoredPolygon(
+                new Rectangle(new Vector(0., 0.), new Vector(50., 50.)),
+                new Vector(1., 0., 1., 0.3)
+        );
 
         LwjglTable tab = new LwjglTable(2, 2);
         LwjglTable tab1 = new LwjglTable(2, 2);
@@ -42,6 +53,7 @@ public class Main {
 
         win.addOnTop(layer0);
 
+        layer0.addOnTop(rec);
         layer0.addOnTop(tab);
 
         try {
