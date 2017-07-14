@@ -6,7 +6,8 @@ package view.ui;
 public abstract class Image {
 
 	public enum PixelFormat {
-		RGB
+		RGB,
+		RGBA
 	};
 
 	public final String file;
@@ -19,6 +20,10 @@ public abstract class Image {
 
 	public abstract boolean isLoaded();
 
-	public abstract int[] getData(PixelFormat format) throws ImageException;
+	public abstract short[] getData(PixelFormat format) throws ImageException;
+
+	public abstract int width();
+
+	public abstract int height();
 
 }

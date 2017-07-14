@@ -1,5 +1,7 @@
 package view.lwjglUi.ui.topObjects;
 
+import view.lwjglUi.buffer.LwjglBuffer;
+import view.lwjglUi.buffer.LwjglIndexBuffer;
 import view.lwjglUi.shaderProgram.*;
 import view.lwjglUi.ui.LwjglElement;
 import org.lwjgl.BufferUtils;
@@ -19,6 +21,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
@@ -76,7 +79,7 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 //		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 //		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -181,6 +184,12 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 			case CRAFT_COLORED_VERTEX2D:
 				program.use();
 				int proj = glGetUniformLocation(program.get(), "proj");
+				glUniformMatrix3fv(proj, false, projectionMatrix.getFloatColumnArray());
+				program.unuse();
+				break;
+			case CRAFT_TEXTURED_VERTEX2D:
+				program.use();
+				proj = glGetUniformLocation(program.get(), "proj");
 				glUniformMatrix3fv(proj, false, projectionMatrix.getFloatColumnArray());
 				program.unuse();
 				break;

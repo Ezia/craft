@@ -35,13 +35,31 @@ public class AWTImage extends Image {
 	}
 
 	@Override
-	public int[] getData(PixelFormat format) throws ImageException {
+	public short[] getData(PixelFormat format) throws ImageException {
 		assert(loaded);
 		switch (format) {
 			case RGB:
-				return img.getRGB(0, 0, img.getWidth(), img.getHeight(), null, 0, 0);
+				short[] data = new short[width()*height()*4];
+				for (int i = 0; i < width(); ++i) {
+					for (int j = 0; j < height(); ++j) {
+						data[j*width() + i] = 0; // TODO
+						data[j*width() + i + 1] = 0; // TODO
+						data[j*width() + i + 2] = 0; // TODO
+						data[j*width() + i + 3] = 0; // TODO
+					}
+				}
+				return data;
 			default:
 				throw new ImageException("Unsupported image format.");
 		}
+	}
+
+	public int width() {
+		return img.getWidth();
+	}
+
+
+	public int height() {
+		return img.getHeight();
 	}
 }

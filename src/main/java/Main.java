@@ -1,5 +1,6 @@
 import view.lwjglUi.ui.container.LwjglTable;
 import view.lwjglUi.ui.element.LwjglColoredPolygon;
+import view.lwjglUi.ui.element.LwjglTexturedPolygon;
 import view.lwjglUi.ui.topObjects.LwjglLayer;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.awtUi.AWTImage;
@@ -40,6 +41,11 @@ public class Main {
                 new Vector(1., 0., 1., 0.3)
         );
 
+        LwjglTexturedPolygon texRec = new LwjglTexturedPolygon(
+                new Rectangle(new Vector(0., 0.), new Vector(250., 250.)),
+                new AWTImage("src/main/resources/test.png")
+        );
+
         LwjglTable tab = new LwjglTable(2, 2);
         LwjglTable tab1 = new LwjglTable(2, 2);
         tab1.getUITable().set(0, 0, rec);
@@ -53,8 +59,8 @@ public class Main {
 
         win.addOnTop(layer0);
 
-//        layer0.addOnTop(rec);
         layer0.addOnTop(tab);
+        layer0.addOnTop(texRec);
 
         try {
             win.start();
