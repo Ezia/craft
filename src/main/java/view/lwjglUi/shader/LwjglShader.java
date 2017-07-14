@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static org.lwjgl.opengl.ARBShaderObjects.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
@@ -33,7 +32,7 @@ public class LwjglShader {
 	public void load() throws LwjglShaderException {
 		try {
 			compiled = false;
-			glShaderSourceARB(shader, loadSource());
+			glShaderSource(shader, loadSource());
 			loaded = true;
 		} catch (IOException e) {
 			loaded = false;
@@ -44,8 +43,8 @@ public class LwjglShader {
 
 	public void compile() throws LwjglShaderException {
 		assert(loaded);
-		glCompileShaderARB(shader);
-		if (glGetObjectParameteriARB(shader, GL_OBJECT_COMPILE_STATUS_ARB) == GL_FALSE) {
+		glCompileShader(shader);
+		if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
 			throw new LwjglShaderException("Shader compilation exception on file " + file + " :\n" + glGetShaderInfoLog(shader));
 		}
 		compiled = true;
@@ -60,7 +59,7 @@ public class LwjglShader {
 	}
 
 	public void delete() {
-		glDeleteObjectARB(shader);
+		glDeleteShader(shader);
 	}
 
 	private StringBuffer loadSource() throws IOException {

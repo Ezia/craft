@@ -5,8 +5,8 @@ import view.lwjglUi.shader.LwjglGeometryShader;
 import view.lwjglUi.shader.LwjglShaderException;
 import view.lwjglUi.shader.LwjglVertexShader;
 
-import static org.lwjgl.opengl.ARBShaderObjects.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 
 
 public class LwjglProgram {
@@ -32,7 +32,7 @@ public class LwjglProgram {
 			compiled = false;
 			linked = false;
 
-			this.program = glCreateProgramObjectARB();
+			this.program = glCreateProgram();
 			if (this.program == 0) {
 				throw new LwjglProgramException("Could not allocate memory for program.");
 			}
@@ -44,11 +44,11 @@ public class LwjglProgram {
 			} else {
 				this.geometryShader = null;
 			}
-			glAttachObjectARB(program, this.vertexShader.get());
-			glAttachObjectARB(program, this.fragmentShader.get());
+			glAttachShader(program, this.vertexShader.get());
+			glAttachShader(program, this.fragmentShader.get());
 
 		} catch (LwjglShaderException e) {
-			glDeleteObjectARB(this.program);
+			glDeleteProgram(this.program);
 			if (this.vertexShader != null) {
 				this.vertexShader.delete();
 			}
@@ -86,9 +86,9 @@ public class LwjglProgram {
 
 	public void link() throws LwjglProgramException {
 		assert(compiled);
-		glLinkProgramARB(program);
-		if (glGetObjectParameteriARB(program, GL_OBJECT_LINK_STATUS_ARB) == GL_FALSE) {
-			throw new LwjglProgramException("Program link exception :\n" + glGetInfoLogARB(program));
+		glLinkProgram(program);
+		if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
+			throw new LwjglProgramException("Program link exception :\n" + glGetProgramInfoLog(program));
 		}
 		linked = true;
 	}
@@ -103,11 +103,11 @@ public class LwjglProgram {
 
 	public void use() {
 		assert(linked);
-		glUseProgramObjectARB(program);
+		glUseProgram(program);
 	}
 
 	public void unuse() {
-		glUseProgramObjectARB(0);
+		glUseProgram(0);
 	}
 
 	public int get() {

@@ -7,6 +7,12 @@ public enum LwjglProgramPreset {
 			"renderV.glsl",
 			"renderF.glsl",
 			""
+	),
+	CRAFT_TEXTURED_VERTEX2D(
+			"craft_textured_vertex",
+			"texturedV.glsl",
+			"texturedF.glsl",
+			""
 	);
 
 	public final String name;
