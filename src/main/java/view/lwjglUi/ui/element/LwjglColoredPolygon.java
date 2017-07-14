@@ -21,6 +21,7 @@ import util.math.Vector;
 public class LwjglColoredPolygon extends LwjglElement {
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
+	protected int indexNbr = 0;
 	protected LwjglVertexArray vertexArray = null;
 
 	private boolean init = false;
@@ -41,6 +42,7 @@ public class LwjglColoredPolygon extends LwjglElement {
 				this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
 				int[] indices = chain.getIndexArray();
 				this.indexBuffer.set(indices);
+				indexNbr = indices.length;
 
 				init = true;
 			} catch (Exception e) {
@@ -87,7 +89,7 @@ public class LwjglColoredPolygon extends LwjglElement {
 		glUniformMatrix3fv(model, false, getUIColoredPolygon().transform.globalMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP,
-				getUIColoredPolygon().getPolygon().getPolygonalChain().getIndexNbr(),
+				indexNbr,
 				GL_UNSIGNED_INT, 0);
 
 		this.indexBuffer.unbind();
