@@ -53,4 +53,9 @@ public class Rectangle implements Polygon {
 	public Rectangle getBoundingBox() {
 		return this;
 	}
+
+	@Override
+	public int getPointNbr() {
+		return 4;
+	}
 }

@@ -13,4 +13,6 @@ public interface Polygon extends Shape {
 
 	PolygonalChain getTriangleChain();
 
+	int getPointNbr();
+
 }
