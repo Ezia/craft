@@ -15,7 +15,7 @@ import view.lwjglUi.ui.LwjglElement;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.lwjglUi.vertexArray.LwjglVertexArray;
 import view.lwjglUi.vertexArray.LwjglVertexArrayException;
-import view.ui.element.shape2D.UIColoredPolygon;
+import view.ui.element.UIColoredPolygon;
 import util.math.Vector;
 
 public class LwjglColoredPolygon extends LwjglElement {

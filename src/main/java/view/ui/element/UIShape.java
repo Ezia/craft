@@ -1,4 +1,4 @@
-package view.ui.element.shape2D;
+package view.ui.element;
 
 import util.shape.Rectangle;
 import util.shape.Shape;

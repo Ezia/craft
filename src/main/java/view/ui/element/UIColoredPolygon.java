@@ -1,4 +1,4 @@
-package view.ui.element.shape2D;
+package view.ui.element;
 
 import util.math.Vector;
 import util.shape.Polygon;
