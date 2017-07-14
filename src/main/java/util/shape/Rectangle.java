@@ -17,10 +17,10 @@ public class Rectangle implements Polygon {
 	}
 
 	public Rectangle(Vector pos, Vector diag) {
-//		assert(diag.size() == 2);
-//		assert(pos.size() == 2);
-		assert(pos.x() >= 0);
-		assert(pos.y() >= 0);
+//		assert(diag.sizeEqual() == 2);
+//		assert(pos.sizeEqual() == 2);
+//		assert(pos.x() >= 0);
+//		assert(pos.y() >= 0);
 		this.pos = pos;
 		this.diag = diag;
 	}
