@@ -39,11 +39,15 @@ public class Transform {
 	///// ACCESSORS /////
 
 	public int inputDimension() {
-		return localMatrix.lineNbr() - 1;
+		return globalMatrix().lineNbr() - 1;
 	}
 
 	public int outputDimension() {
 		return localMatrix.columnNbr() - 1;
+	}
+
+	public int localInputDimension() {
+		return localMatrix.lineNbr() - 1;
 	}
 
 	public void setParent(Transform parent) {
@@ -59,7 +63,7 @@ public class Transform {
 
 	public void addChild(Transform transform) {
 		notContained(notNull(transform), this.children);
-		equal(this.outputDimension(), transform.inputDimension());
+		equal(this.outputDimension(), transform.localInputDimension());
 		if (transform.parent != null) {
 			transform.parent.removeChild(transform);
 		}
@@ -116,49 +120,59 @@ public class Transform {
 	}
 
 	public void setMatrix(Matrix matrix) {
-		equal(notNull(matrix).lineNbr(), this.inputDimension()+1);
-		equal(matrix.columnNbr(), this.outputDimension()+1);
+		if (parent != null) {
+			equal(notNull(matrix).lineNbr(), this.localInputDimension()+1);
+		}
+		if (!children.isEmpty()) {
+			equal(matrix.columnNbr(), this.outputDimension()+1);
+		}
 		this.localMatrix = matrix;
 		this.setUpToDate(false);
 	}
 
 	public void setIdentity() {
-		this.localMatrix = Matrix.identity(this.inputDimension()+1, this.outputDimension()+1);
+		this.localMatrix = Matrix.identity(this.localInputDimension()+1, this.outputDimension()+1);
 		this.setUpToDate(false);
 	}
 
 	public void preMultiply(Matrix matrix) {
-		this.localMatrix = matrix.times(this.localMatrix);
-		this.setUpToDate(false);
+		equal(matrix.columnNbr(), this.outputDimension()+1);
+		this.setMatrix(matrix.times(this.localMatrix));
 	}
 
 	public void postMultiply(Matrix matrix) {
-		this.localMatrix = this.localMatrix.times(matrix);
-		this.setUpToDate(false);
+		equal(matrix.lineNbr(), this.outputDimension()+1);
+		this.setMatrix(this.localMatrix.times(matrix));
 	}
 
 	public Vector apply(Vector vector) {
+		equal(notNull(vector).size(), inputDimension()+1);
 		return vector.times(this.globalMatrix());
 	}
 
 	public Vector applyToPoint(Vector vector) {
-		return new Vector(vector, 1.).times(this.globalMatrix());
+		equal(notNull(vector).size(), inputDimension());
+		return new Vector(outputDimension(), new Vector(vector, 1.).times(this.globalMatrix()).homogenize());
 	}
 
 	public Vector applyToVector(Vector vector) {
-		return new Vector(vector, 0.).times(this.globalMatrix());
+		equal(notNull(vector).size(), inputDimension());
+		return new Vector(outputDimension(), new Vector(vector, 0.).times(this.globalMatrix()));
 	}
 
 	public Vector applyLocal(Vector vector) {
+		equal(notNull(vector).size(), inputDimension()+1);
 		return vector.times(this.localMatrix);
 	}
 
 	public Vector applyLocalToPoint(Vector vector) {
-		return new Vector(vector, 1).times(this.localMatrix);
+		equal(notNull(vector).size(), inputDimension());
+		return new Vector(outputDimension(), new Vector(vector, 1).times(this.localMatrix).homogenize());
 	}
 
 	public Vector applyLocalToVector(Vector vector) {
-		return new Vector(vector, 0).times(this.localMatrix);
+		equal(notNull(vector).size(), inputDimension());
+		return new Vector(outputDimension(), new Vector(vector, 0).times(this.localMatrix));
 	}
 
 	public Rectangle applyToRectangle(Rectangle rectangle) {
