@@ -1,3 +1,4 @@
+import util.math.Matrix;
 import view.lwjglUi.ui.container.LwjglTable;
 import view.lwjglUi.ui.element.LwjglColoredPolygon;
 import view.lwjglUi.ui.element.LwjglTexturedPolygon;
@@ -46,6 +47,8 @@ public class Main {
 //                new AWTImage("src/main/resources/test_photo.jpg")
                 new AWTImage("src/main/resources/test.png")
         );
+
+        texRec.getUITexturedPolygon().getTransform().setMatrix(Matrix.translation(new Vector(20., 20.)));
 
         LwjglTable tab = new LwjglTable(2, 2);
         LwjglTable tab1 = new LwjglTable(2, 2);

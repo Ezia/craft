@@ -18,7 +18,7 @@ public interface UIObject {
 
 	public void setParent(UIContainer parent);
 
-	public void setTransformParent(Transform parent);
+	public Transform getTransform();
 
 	public Rectangle getGlobalBoundingBox();
 }

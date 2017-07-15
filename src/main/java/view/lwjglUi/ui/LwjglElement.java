@@ -28,11 +28,6 @@ public abstract class LwjglElement implements UIObject {
 	}
 
 	@Override
-	public void setTransformParent(Transform parent) {
-		ui.setTransformParent(parent);
-	}
-
-	@Override
 	public double width() {
 		return ui.width();
 	}
@@ -54,6 +49,11 @@ public abstract class LwjglElement implements UIObject {
 
 	public UIElement getUIObject() {
 		return ui;
+	}
+
+	@Override
+	public Transform getTransform() {
+		return ui.getTransform();
 	}
 
 	public abstract void draw(LwjglWindow window);

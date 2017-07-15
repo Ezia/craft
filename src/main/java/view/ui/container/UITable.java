@@ -80,7 +80,7 @@ public class UITable<T extends UIObject> extends UIContainer {
 		}
 
 		value.setParent(this);
-		value.setTransformParent(transforms.get(l, c));
+		value.getTransform().setParent(transforms.get(l, c));
 
 		table.set(l, c, value);
 

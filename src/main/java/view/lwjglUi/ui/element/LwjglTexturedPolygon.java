@@ -1,6 +1,7 @@
 package view.lwjglUi.ui.element;
 
 import org.lwjgl.opengl.GL;
+import util.math.Matrix;
 import util.shape.Polygon;
 import util.shape.PolygonalChain;
 import view.lwjglUi.buffer.LwjglIndexBuffer;
@@ -29,7 +30,6 @@ import static org.lwjgl.opengl.GL13.*;
 public class LwjglTexturedPolygon extends LwjglElement {
 	protected LwjglTexture2D texture = null;
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
-	protected LwjglVertexBuffer vertexTexCoordBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
 	protected int indexNbr = 0;
 	protected LwjglVertexArray vertexArray = null;
@@ -53,10 +53,6 @@ public class LwjglTexturedPolygon extends LwjglElement {
 				this.vertexPositionBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
 				float[] positions = chain.getFloatPointArray();
 				this.vertexPositionBuffer.set(positions);
-
-				this.vertexTexCoordBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
-				float[] texCoords = {1, 0, 0, 0, 1, 1, 0, 1};
-				this.vertexTexCoordBuffer.set(texCoords);
 
 				this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
 				int[] indices = chain.getIndexArray();
@@ -86,12 +82,6 @@ public class LwjglTexturedPolygon extends LwjglElement {
 			glVertexAttribPointer(positionAttrib, 2, GL_FLOAT, false, 0, 0);
 			this.vertexPositionBuffer.unbind();
 
-			int texAttrib = glGetAttribLocation(program.get(), "tex");
-			glEnableVertexAttribArray(texAttrib);
-			this.vertexTexCoordBuffer.bind();
-			glVertexAttribPointer(texAttrib, 2, GL_FLOAT, false, 0, 0);
-			this.vertexTexCoordBuffer.unbind();
-
 			vertexArray.unbind();
 		} catch (LwjglVertexArrayException e) {
 			e.printStackTrace();
@@ -101,8 +91,8 @@ public class LwjglTexturedPolygon extends LwjglElement {
 
 	@Override
 	public void draw(LwjglWindow window) {
-		// TODO
 		LwjglProgram program = window.getProgram(LwjglProgramPreset.CRAFT_TEXTURED_VERTEX2D);
+
 		program.use();
 
 		updateBuffers(program);
@@ -110,21 +100,20 @@ public class LwjglTexturedPolygon extends LwjglElement {
 
 		vertexArray.bind();
 		indexBuffer.bind();
-
-//		int model = glGetUniformLocation(program.get(), "texture");
-//		glUniformMatrix3fv(model, false, getUITexturedPolygon().transform.globalMatrix().getFloatColumnArray());
+		texture.bind();
 
 		int model = glGetUniformLocation(program.get(), "model");
 		glUniformMatrix3fv(model, false, getUITexturedPolygon().transform.globalMatrix().getFloatColumnArray());
 
-		texture.bind();
+		int texProj = glGetUniformLocation(program.get(), "texCoordProj");
+		glUniformMatrix3fv(texProj, false, getUITexturedPolygon().getTextureProjectionMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP,
 				indexNbr,
 				GL_UNSIGNED_INT, 0);
 
 		texture.unbind();
-		this.indexBuffer.unbind();
+		indexBuffer.unbind();
 		vertexArray.unbind();
 
 		program.unuse();

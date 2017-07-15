@@ -1,7 +1,5 @@
 package view.lwjglUi.ui.topObjects;
 
-import view.lwjglUi.buffer.LwjglBuffer;
-import view.lwjglUi.buffer.LwjglIndexBuffer;
 import view.lwjglUi.shaderProgram.*;
 import view.lwjglUi.ui.LwjglElement;
 import org.lwjgl.BufferUtils;
@@ -21,7 +19,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
@@ -46,7 +43,7 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		projectionMatrix = Matrix.projection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
+		projectionMatrix = Matrix.centeredProjection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
 
 		for (LwjglProgram p : prog.values()) {
 			updateProgramData(p);

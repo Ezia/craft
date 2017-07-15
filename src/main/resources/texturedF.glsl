@@ -8,6 +8,5 @@ in vec2 texF;
 out vec4 colorR;
 
 void main() {
-//    colorR = colorF;
     colorR = texture2D(texture, texF);
 }

@@ -27,12 +27,13 @@ public abstract class UIElement implements UIObject {
 		if (this.parent != null) {
 			this.parent.remove(this);
 		}
-		setTransformParent(null);
+		getTransform().setParent(null);
 		this.parent = parent;
 	}
 
-	public void setTransformParent(Transform parent) {
-		transform.setParent(parent);
+	@Override
+	public Transform getTransform() {
+		return transform;
 	}
 
 	public Rectangle getGlobalBoundingBox() {
