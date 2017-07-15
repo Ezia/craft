@@ -27,8 +27,8 @@ public class Main {
 
 
         LwjglColoredPolygon rec = new LwjglColoredPolygon(
-                new Rectangle(new Vector(0., 0.), new Vector(250., 250.)),
-                new Vector(1., 1., 1., 0.3)
+                new Rectangle(new Vector(0., 0.), new Vector(200., 200.)),
+                new Vector(1., 1., 1., 0.6)
         );
 
         LwjglColoredPolygon rec1 = new LwjglColoredPolygon(
@@ -43,6 +43,7 @@ public class Main {
 
         LwjglTexturedPolygon texRec = new LwjglTexturedPolygon(
                 new Rectangle(new Vector(0., 0.), new Vector(250., 250.)),
+//                new AWTImage("src/main/resources/test_photo.jpg")
                 new AWTImage("src/main/resources/test.png")
         );
 
@@ -59,8 +60,8 @@ public class Main {
 
         win.addOnTop(layer0);
 
-        layer0.addOnTop(tab);
         layer0.addOnTop(texRec);
+        layer0.addOnTop(tab);
 
         try {
             win.start();

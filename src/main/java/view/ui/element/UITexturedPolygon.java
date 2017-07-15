@@ -40,12 +40,8 @@ public class UITexturedPolygon extends UIPolygon {
 		}
 	}
 
-	public short[] getTextureData(Image.PixelFormat format) throws ImageException {
+	public Image getTexture() throws ImageException {
 		update();
-		return texture.getData(notNull(format));
-	}
-
-	public Image getTexture() {
 		return texture;
 	}
 

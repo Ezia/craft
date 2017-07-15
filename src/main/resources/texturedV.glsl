@@ -12,9 +12,9 @@ out vec2 texF;
 
 void main() {
     vec4 pos = vec4(vec3(position, 1.) * model * proj, 1.0);
-    gl_Position = pos;
 //    gl_Position = vec4(position, 0., 1.0);
 //    colorF = color;
     colorF = vec4(1., 1., 1., 1.);
     texF = tex;
+    gl_Position = pos;
 }

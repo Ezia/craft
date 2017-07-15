@@ -20,7 +20,7 @@ public abstract class Image {
 
 	public abstract boolean isLoaded();
 
-	public abstract short[] getData(PixelFormat format) throws ImageException;
+	public abstract float[] getFloatData(PixelFormat format) throws ImageException;
 
 	public abstract int width();
 

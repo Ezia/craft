@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL;
 import util.shape.Polygon;
 import util.shape.PolygonalChain;
 import view.lwjglUi.buffer.LwjglIndexBuffer;
+import view.lwjglUi.buffer.LwjglTexture2D;
 import view.lwjglUi.buffer.LwjglVertexBuffer;
 import view.lwjglUi.shaderProgram.LwjglProgram;
 import view.lwjglUi.shaderProgram.LwjglProgramPreset;
@@ -26,11 +27,13 @@ import static org.lwjgl.opengl.GL13.*;
  * Created by esia on 14/07/17.
  */
 public class LwjglTexturedPolygon extends LwjglElement {
+	protected LwjglTexture2D texture = null;
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
 	protected LwjglVertexBuffer vertexTexCoordBuffer = null;
 	protected LwjglIndexBuffer indexBuffer = null;
 	protected int indexNbr = 0;
 	protected LwjglVertexArray vertexArray = null;
+
 
 	private boolean init = false;
 
@@ -52,13 +55,16 @@ public class LwjglTexturedPolygon extends LwjglElement {
 				this.vertexPositionBuffer.set(positions);
 
 				this.vertexTexCoordBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
-				float[] texCoords = {0, 0, 0, 1, 1, 0, 1, 1};
+				float[] texCoords = {1, 0, 0, 0, 1, 1, 0, 1};
 				this.vertexTexCoordBuffer.set(texCoords);
 
 				this.indexBuffer = new LwjglIndexBuffer(GL_STATIC_DRAW);
 				int[] indices = chain.getIndexArray();
 				this.indexBuffer.set(indices);
 				indexNbr = indices.length;
+
+				this.texture = new LwjglTexture2D();
+				this.texture.set(getUITexturedPolygon().getTexture());
 
 				init = true;
 			} catch (Exception e) {
@@ -105,15 +111,19 @@ public class LwjglTexturedPolygon extends LwjglElement {
 		vertexArray.bind();
 		indexBuffer.bind();
 
-		// TODO texture
+//		int model = glGetUniformLocation(program.get(), "texture");
+//		glUniformMatrix3fv(model, false, getUITexturedPolygon().transform.globalMatrix().getFloatColumnArray());
 
 		int model = glGetUniformLocation(program.get(), "model");
 		glUniformMatrix3fv(model, false, getUITexturedPolygon().transform.globalMatrix().getFloatColumnArray());
+
+		texture.bind();
 
 		glDrawElements(GL_TRIANGLE_STRIP,
 				indexNbr,
 				GL_UNSIGNED_INT, 0);
 
+		texture.unbind();
 		this.indexBuffer.unbind();
 		vertexArray.unbind();
 

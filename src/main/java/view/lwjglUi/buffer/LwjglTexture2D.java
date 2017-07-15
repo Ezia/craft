@@ -14,11 +14,15 @@ public class LwjglTexture2D extends LwjglTexture {
 	}
 
 	public void set(Image image) throws ImageException {
+		this.bind();
 		glTexImage2D(target, 0, GL_RGBA,
 				image.width(),
 				image.height(),
 				0, GL_RGBA,
-				GL_UNSIGNED_SHORT,
-				image.getData(Image.PixelFormat.RGBA));
+				GL_FLOAT,
+				image.getFloatData(Image.PixelFormat.RGBA));
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		this.unbind();
 	}
 }
