@@ -265,6 +265,7 @@ public class Vector {
 
 	public Vector homogenize() {
 		sizeGreaterOrEqual(this, 2);
+		greater(this.values[this.size()-1], 0.);
 		return this.times(1/this.values[this.size()-1]);
 	}
 }
