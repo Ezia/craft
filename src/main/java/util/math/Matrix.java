@@ -261,7 +261,7 @@ public class Matrix {
 	 * @param rectangle
 	 * @return
 	 */
-	public static Matrix projection2D(Rectangle rectangle) {
+	public static Matrix centeredProjection2D(Rectangle rectangle) {
 		double centerX = notNull(rectangle).pos.x();
 		double centerY = rectangle.pos.y();
 
@@ -280,6 +280,29 @@ public class Matrix {
 
 		projection.values[2][0] = -1 - scaleX*centerX;
 		projection.values[2][1] = 1 + scaleY*centerY;
+		projection.values[2][2] = 1;
+		return projection;
+	}
+
+	public static Matrix corneredProjection2D(Rectangle rectangle) {
+		double centerX = notNull(rectangle).pos.x();
+		double centerY = rectangle.pos.y();
+
+		double scaleX = 1./(rectangle.diag.x());
+		double scaleY = 1./(rectangle.diag.y());
+
+		Matrix projection = new Matrix(3, 3);
+
+		projection.values[0][0] = scaleX;
+		projection.values[0][1] = 0;
+		projection.values[0][2] = 0;
+
+		projection.values[1][0] = 0;
+		projection.values[1][1] = scaleY;
+		projection.values[1][2] = 0;
+
+		projection.values[2][0] = -scaleX*centerX;
+		projection.values[2][1] = -scaleY*centerY;
 		projection.values[2][2] = 1;
 		return projection;
 	}
