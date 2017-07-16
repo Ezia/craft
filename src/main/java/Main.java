@@ -1,6 +1,8 @@
 import util.math.Matrix;
 import view.lwjglUi.ui.container.LwjglTable;
+import view.lwjglUi.ui.drawable.LwjglUniformColorPolygon;
 import view.lwjglUi.ui.element.LwjglColoredPolygon;
+import view.lwjglUi.ui.element.LwjglDrawing;
 import view.lwjglUi.ui.element.LwjglTexturedPolygon;
 import view.lwjglUi.ui.topObjects.LwjglLayer;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
@@ -42,6 +44,13 @@ public class Main {
                 new Vector(1., 0., 1., 0.3)
         );
 
+        LwjglDrawing draw = new LwjglDrawing(
+                new LwjglUniformColorPolygon(
+                    new Rectangle(new Vector(0., 0.), new Vector(50., 50.)),
+                    new Vector(1., 0.5, 1., 1)
+                )
+        );
+
         LwjglTexturedPolygon texRec = new LwjglTexturedPolygon(
                 new Rectangle(new Vector(0., 0.), new Vector(250., 250.)),
 //                new AWTImage("src/main/resources/test_photo.jpg")
@@ -56,6 +65,7 @@ public class Main {
         tab1.getUITable().set(1, 1, rec1);
         tab.getUITable().set(1, 0, tab1);
         tab.getUITable().set(1, 1, rec2);
+        tab.getUITable().set(0, 1, draw);
 
         LwjglWindow win = new LwjglWindow(windowBox , "Craft");
 
