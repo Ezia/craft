@@ -11,7 +11,6 @@ import util.shape.Rectangle;
 import util.math.Vector;
 
 import java.nio.IntBuffer;
-import java.util.LinkedList;
 import java.util.TreeMap;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -24,9 +23,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 	private long window = 0;
 
-	private LinkedList<LwjglProgram> programs = new LinkedList<>();
-
-	private TreeMap<LwjglProgramPreset, LwjglProgram> prog = new TreeMap<>();
+	private TreeMap<LwjglProgramPreset, LwjglProgram> programs = new TreeMap<>();
 
 	private Matrix projectionMatrix;
 
@@ -45,7 +42,7 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 
 		projectionMatrix = Matrix.centeredProjection2D(new Rectangle(new Vector(0., 0.), getBox().diag));
 
-		for (LwjglProgram p : prog.values()) {
+		for (LwjglProgram p : programs.values()) {
 			updateProgramData(p);
 		}
 
@@ -157,23 +154,23 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 	}
 
 	public LwjglProgram getProgram(LwjglProgramPreset preset) {
-		if (!prog.containsKey(preset)) {
+		if (!programs.containsKey(preset)) {
 			try {
 				LwjglProgram program = new LwjglProgram(preset);
 				program.load();
 				program.compile();
 				program.link();
 				updateProgramData(program);
-				prog.put(preset, program);
+				programs.put(preset, program);
 			} catch (Exception e) {
-				for (LwjglProgram progr : prog.values()) {
+				for (LwjglProgram progr : programs.values()) {
 					progr.delete();
 				}
 				e.printStackTrace();
 				System.exit(1);
 			}
 		}
-		return prog.get(preset);
+		return programs.get(preset);
 	}
 
 	private void updateProgramData(LwjglProgram program) throws LwjglProgramException {
@@ -196,8 +193,8 @@ public class LwjglWindow extends UIWindow<LwjglElement, LwjglLayer> {
 	}
 
 	private void end() {
-		for (LwjglProgram prog : programs) {
-			prog.delete();
+		for (LwjglProgram p : programs.values()) {
+			p.delete();
 		}
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
