@@ -2,12 +2,12 @@ package view.ui.element;
 
 import util.shape.Rectangle;
 import view.ui.UIElement;
-import view.ui.drawable.Drawable;
+import view.ui.drawable.UIDrawable;
 
 /**
  * Created by esia on 16/07/17.
  */
-public class UIDrawing<T extends Drawable> extends UIElement {
+public class UIDrawing<T extends UIDrawable> extends UIElement {
 	protected final T drawable;
 
 	public UIDrawing(T drawable) {
@@ -20,12 +20,12 @@ public class UIDrawing<T extends Drawable> extends UIElement {
 
 	@Override
 	public double width() {
-		return drawable.width();
+		return getLocalBoundingBox().diag.x();
 	}
 
 	@Override
 	public double height() {
-		return drawable.height();
+		return getLocalBoundingBox().diag.y();
 	}
 
 	@Override
