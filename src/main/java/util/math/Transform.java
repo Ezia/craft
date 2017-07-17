@@ -39,15 +39,15 @@ public class Transform {
 	///// ACCESSORS /////
 
 	public int inputDimension() {
-		return globalMatrix().lineNbr() - 1;
+		return localMatrix.lineNbr() - 1;
 	}
 
 	public int outputDimension() {
-		return localMatrix.columnNbr() - 1;
+		return globalMatrix().columnNbr() - 1;
 	}
 
-	public int localInputDimension() {
-		return localMatrix.lineNbr() - 1;
+	public int localOutputDimension() {
+		return localMatrix.columnNbr() - 1;
 	}
 
 	public void setParent(Transform parent) {
@@ -63,7 +63,7 @@ public class Transform {
 
 	public void addChild(Transform transform) {
 		notContained(notNull(transform), this.children);
-		equal(this.outputDimension(), transform.localInputDimension());
+		equal(transform.localOutputDimension(), this.inputDimension());
 		if (transform.parent != null) {
 			transform.parent.removeChild(transform);
 		}
@@ -113,35 +113,33 @@ public class Transform {
 			if (this.parent == null) {
 				this.globalMatrix = this.localMatrix;
 			} else {
-				this.globalMatrix = this.parent.globalMatrix().times(this.localMatrix);
+				this.globalMatrix = this.localMatrix.times(this.parent.globalMatrix());
 			}
 			this.upToDate = true;
 		}
 	}
 
 	public void setMatrix(Matrix matrix) {
-		if (parent != null) {
-			equal(notNull(matrix).lineNbr(), this.localInputDimension()+1);
-		}
-		if (!children.isEmpty()) {
-			equal(matrix.columnNbr(), this.outputDimension()+1);
-		}
+		equal(matrix.lineNbr(), inputDimension()+1);
+		equal(matrix.columnNbr(), localOutputDimension()+1);
 		this.localMatrix = matrix;
 		this.setUpToDate(false);
 	}
 
 	public void setIdentity() {
-		this.localMatrix = Matrix.identity(this.localInputDimension()+1, this.outputDimension()+1);
+		this.localMatrix = Matrix.identity(this.inputDimension()+1, this.localOutputDimension()+1);
 		this.setUpToDate(false);
 	}
 
 	public void preMultiply(Matrix matrix) {
-		equal(matrix.columnNbr(), this.outputDimension()+1);
+		equal(matrix.lineNbr(), inputDimension()+1);
+		equal(matrix.columnNbr(), this.localOutputDimension()+1);
 		this.setMatrix(matrix.times(this.localMatrix));
 	}
 
 	public void postMultiply(Matrix matrix) {
-		equal(matrix.lineNbr(), this.outputDimension()+1);
+		equal(matrix.lineNbr(), localOutputDimension()+1);
+		equal(matrix.columnNbr(), this.localOutputDimension()+1);
 		this.setMatrix(this.localMatrix.times(matrix));
 	}
 
