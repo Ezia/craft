@@ -147,7 +147,7 @@ public class UITable<T extends UIObject> extends UIContainer {
 	}
 
 	@Override
-	public void remove(UIElement child) {
+	public void remove(UIObject child) {
 		for (int i = 0; i < lineNbr(); i++) {
 			for (int j = 0; j < columnNbr(); ++j) {
 				if (get(i, j) == child) {
