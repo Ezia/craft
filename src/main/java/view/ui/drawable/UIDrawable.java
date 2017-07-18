@@ -1,5 +1,6 @@
 package view.ui.drawable;
 
+import util.math.Vector;
 import util.shape.Rectangle;
 
 /**

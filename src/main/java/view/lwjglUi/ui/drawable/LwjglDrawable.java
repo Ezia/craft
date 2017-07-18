@@ -1,6 +1,7 @@
 package view.lwjglUi.ui.drawable;
 
 import util.math.Matrix;
+import util.math.Vector;
 import util.shape.Rectangle;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.ui.drawable.UIDrawable;
@@ -26,5 +27,4 @@ public abstract class LwjglDrawable<T extends UIDrawable> implements UIDrawable 
 	}
 
 	public abstract void draw(LwjglWindow window, Matrix transform);
-
 }

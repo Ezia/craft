@@ -1,5 +1,7 @@
 package view.lwjglUi.ui;
 
+import util.math.Matrix;
+import util.math.Vector;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import util.math.Transform;
 import util.shape.Rectangle;
@@ -23,38 +25,43 @@ public abstract class LwjglElement implements UIObject {
 	}
 
 	@Override
-	public void setParent(UIContainer parent) {
-		ui.setParent(parent);
+	public void setParent(UIContainer parent, Transform transform) {
+		ui.setParent(parent, transform);
 	}
 
-	@Override
-	public double width() {
-		return ui.width();
-	}
-
-	@Override
-	public double height() {
-		return ui.height();
-	}
-
-	@Override
-	public Rectangle getLocalBoundingBox() {
-		return ui.getLocalBoundingBox();
-	}
-
-	@Override
-	public Rectangle getGlobalBoundingBox() {
-		return ui.getGlobalBoundingBox();
-	}
+//	@Override
+//	public Rectangle getBoundingBox() {
+//		return ui.getBoundingBox();
+//	}
 
 	public UIElement getUIObject() {
 		return ui;
 	}
 
+	public abstract void draw(LwjglWindow window);
+
 	@Override
-	public Transform getTransform() {
-		return ui.getTransform();
+	public boolean isProportionnal() {
+		return false;
 	}
 
-	public abstract void draw(LwjglWindow window);
+	@Override
+	public double getProportion() {
+		return 0;
+	}
+
+	@Override
+	public Matrix getTransformGlobalMatrix() {
+		return ui.getTransformGlobalMatrix();
+	}
+
+	@Override
+	public Vector getDimension() {
+		return ui.getDimension();
+	}
+
+	@Override
+	public void setDimension(Vector dimension) {
+		ui.setDimension(dimension);
+	}
 }

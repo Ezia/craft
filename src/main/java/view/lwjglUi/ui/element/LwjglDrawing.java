@@ -11,8 +11,8 @@ import view.ui.element.UIDrawing;
  */
 public class LwjglDrawing extends LwjglElement {
 
-	public LwjglDrawing(LwjglDrawable ui) {
-		super(new UIDrawing<LwjglDrawable>(ui));
+	public LwjglDrawing(boolean proportionnal, LwjglDrawable ui) {
+		super(new UIDrawing<LwjglDrawable>(proportionnal, ui));
 	}
 
 	public UIDrawing<LwjglDrawable> getUIDrawing() {
@@ -21,6 +21,6 @@ public class LwjglDrawing extends LwjglElement {
 
 	@Override
 	public void draw(LwjglWindow window) {
-		getUIDrawing().getDrawable().draw(window, getUIDrawing().transform.globalMatrix());
+		getUIDrawing().getDrawable().draw(window, getUIDrawing().getTransformGlobalMatrix());
 	}
 }

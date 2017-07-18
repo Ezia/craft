@@ -230,9 +230,11 @@ public class Matrix {
 	}
 
 	public static Matrix homothety2D(Vector center, Vector scale) {
-		double centerX = sizeEqual(notNull(center), 2).x();
+		equal(center.size(), 2);
+		equal(scale.size(), 2);
+		double centerX = center.x();
 		double centerY = center.y();
-		double scaleX = sizeEqual(notNull(scale), 2).x();
+		double scaleX = scale.x();
 		double scaleY = scale.y();
 
 		Matrix homothety = new Matrix(3, 3);
@@ -250,6 +252,10 @@ public class Matrix {
 		homothety.values[2][2] = 1;
 
 		return homothety;
+	}
+
+	public static Matrix homothety2D(Vector scale) {
+		return homothety2D(new Vector(0., 0.), scale);
 	}
 
 	public static Matrix homothety2D(Vector center, double scale) {

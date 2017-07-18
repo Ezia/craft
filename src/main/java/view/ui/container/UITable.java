@@ -6,13 +6,15 @@ import util.math.Transform;
 import util.math.Vector;
 import util.shape.Rectangle;
 import view.ui.UIContainer;
-import view.ui.UIElement;
 import view.ui.UIObject;
 
 import java.util.Arrays;
 
 public class UITable<T extends UIObject> extends UIContainer {
 
+	private T background;
+	private Transform backgroundTransform;
+	private Transform tableTransform;
 	private Table<T> table;
 	private Table<Transform> transforms;
 
@@ -23,21 +25,28 @@ public class UITable<T extends UIObject> extends UIContainer {
 	private Transform[] columnTransforms;
 	private boolean[] lineUpToData;
 	private boolean[] columnUpToData;
-	private boolean upToDate = true;
+	private boolean backgroundUpToDate;
+	private boolean upToDate;
 
 	public UITable(int lineNbr, int columnNbr) {
-		assert(lineNbr > 0 && columnNbr > 0);
+		super(false);
 
+//		assert (lineNbr > 0 && columnNbr > 0);
+
+		background = null;
+		tableTransform = new Transform(2, 2, this.transform);
 		table = new Table<T>(lineNbr, columnNbr, null);
 		transforms = new Table<Transform>(lineNbr, columnNbr);
 		for (int i = 0; i < lineNbr; ++i) {
 			for (int j = 0; j < columnNbr; ++j) {
-				transforms.set(i, j, new Transform(2, 2, transform));
+				transforms.set(i, j, new Transform(2, 2, tableTransform));
 			}
 		}
 
 		// up-to-date flags
 
+		backgroundUpToDate = true;
+		upToDate = true;
 		lineUpToData = new boolean[lineNbr];
 		columnUpToData = new boolean[columnNbr];
 
@@ -46,19 +55,20 @@ public class UITable<T extends UIObject> extends UIContainer {
 
 		// transforms
 
+		backgroundTransform = new Transform(2, 2, this.transform);
 		lineTransforms = new Transform[lineNbr];
 		columnTransforms = new Transform[columnNbr];
 
 		lineTransforms[0] = new Transform(1, 1);
 		for (int i = 1; i < lineNbr; ++i) {
 			lineTransforms[i] = new Transform(1, 1);
-			lineTransforms[i-1].addChild(lineTransforms[i]);
+			lineTransforms[i - 1].addChild(lineTransforms[i]);
 		}
 
 		columnTransforms[0] = new Transform(1, 1);
 		for (int i = 1; i < columnNbr; ++i) {
 			columnTransforms[i] = new Transform(1, 1);
-			columnTransforms[i-1].addChild(columnTransforms[i]);
+			columnTransforms[i - 1].addChild(columnTransforms[i]);
 		}
 	}
 
@@ -74,21 +84,33 @@ public class UITable<T extends UIObject> extends UIContainer {
 		// TODO : optimize in certain cases
 		lineUpToData[l] = false;
 		columnUpToData[c] = false;
+		upToDate = false;
 
 		if (get(l, c) != null) {
-			get(l, c).setParent(null);
+			get(l, c).setParent(null, null);
 		}
-
-		value.setParent(this);
-		value.getTransform().setParent(transforms.get(l, c));
-
+		value.setParent(this, transforms.get(l, c));
 		table.set(l, c, value);
+	}
 
+	public void setBackground(T value) {
+		// TODO : optimize in certain cases
+		backgroundUpToDate = false;
 		upToDate = false;
+
+		if (background != null) {
+			background.setParent(null, null);
+		}
+		value.setParent(this, backgroundTransform);
+		background = value;
 	}
 
 	public T get(int l, int c) {
 		return table.get(l, c);
+	}
+
+	public T getBackground() {
+		return background;
 	}
 
 	public void fill(T value) {
@@ -102,12 +124,13 @@ public class UITable<T extends UIObject> extends UIContainer {
 
 	public void update() {
 		if (!upToDate) {
+
 			for (int i = 0; i < lineNbr(); ++i) {
 				if (!lineUpToData[i]) {
 					double maxWidth = 0;
 					for (int j = 0; j < columnNbr(); ++j) {
 						if (get(i, j) != null) {
-							maxWidth = Math.max(maxWidth, get(i, j).width());
+							maxWidth = Math.max(maxWidth, get(i, j).getDimension().x());
 						}
 					}
 					lineTransforms[i].setMatrix(Matrix.translation(new Vector(maxWidth)));
@@ -119,21 +142,56 @@ public class UITable<T extends UIObject> extends UIContainer {
 					double maxHeight = 0;
 					for (int j = 0; j < lineNbr(); ++j) {
 						if (get(j, i) != null) {
-							maxHeight = Math.max(maxHeight, get(j, i).height());
+							maxHeight = Math.max(maxHeight, get(j, i).getDimension().y());
 						}
 					}
 					columnTransforms[i].setMatrix(Matrix.translation(new Vector(maxHeight)));
 				}
 			}
 
+
+			tableTransform.setIdentity();
+			backgroundTransform.setIdentity();
+
+			if (background != null) {
+				Vector tableDimension = new Vector(
+						lineTransforms[lineNbr()-1].applyToPoint(new Vector(0.)).x(),
+						columnTransforms[columnNbr()-1].applyToPoint(new Vector(0.)).x()
+				);
+
+				Vector backgroundDimension = background.getDimension();
+
+				if (backgroundDimension.x() > tableDimension.x()) {
+					tableTransform.setMatrix(Matrix.translation(
+							new Vector((backgroundDimension.x() - tableDimension.x())/2., 0.)
+					));
+				} else {
+					backgroundTransform.setMatrix(Matrix.translation(
+							new Vector((tableDimension.x() - backgroundDimension.x())/2., 0.)
+					));
+				}
+
+				if (backgroundDimension.y() > tableDimension.y()) {
+					tableTransform.postMultiply(Matrix.translation(
+							new Vector(0., (backgroundDimension.y() - tableDimension.y())/2.)
+					));
+				} else {
+					backgroundTransform.postMultiply(Matrix.translation(
+							new Vector(0., (tableDimension.y() - backgroundDimension.y())/2.)
+					));
+				}
+			}
+
 			for (int l = 0; l < columnNbr(); ++l) {
 				for (int c = 0; c < columnNbr(); ++c) {
 					if ((!lineUpToData[l] || !columnUpToData[c]) && get(l, c) != null) {
+						Vector diag = get(l, c).getDimension();
+
 						transforms.get(l, c).setMatrix(Matrix.translation(new Vector(
 								lineTransforms[l].globalMatrix().get(1, 0)
-										- (lineTransforms[l].localMatrix().get(1, 0) + get(l, c).width())/2,
+										- (lineTransforms[l].localMatrix().get(1, 0) + diag.x()) / 2,
 								columnTransforms[c].globalMatrix().get(1, 0)
-										- (columnTransforms[c].localMatrix().get(1, 0) + get(l, c).height())/2
+										- (columnTransforms[c].localMatrix().get(1, 0) + diag.y()) / 2
 						)));
 					}
 				}
@@ -142,12 +200,18 @@ public class UITable<T extends UIObject> extends UIContainer {
 			Arrays.fill(lineUpToData, true);
 			Arrays.fill(columnUpToData, true);
 
+			backgroundUpToDate = true;
 			upToDate = true;
 		}
 	}
 
 	@Override
 	public void remove(UIObject child) {
+		if (background == child) {
+			background = null;
+			upToDate = false;
+			return;
+		}
 		for (int i = 0; i < lineNbr(); i++) {
 			for (int j = 0; j < columnNbr(); ++j) {
 				if (get(i, j) == child) {
@@ -159,22 +223,50 @@ public class UITable<T extends UIObject> extends UIContainer {
 		}
 	}
 
-	@Override
-	public Rectangle getLocalBoundingBox() {
-		return transform.applyLocalToRectangle(
-				new Rectangle(new Vector(0., 0.), new Vector(width(), height()))
-		);
-	}
+//	@Override
+//	public Rectangle getBoundingBox() {
+//		return transform.applyLocalToRectangle(
+//				new Rectangle(new Vector(0., 0.), new Vector(width(), height()))
+//		);
+//	}
 
-	@Override
+	//	@Override
 	public double width() {
 		update();
-		return lineTransforms[lineNbr()-1].applyToPoint(new Vector(0.)).x();
+		return lineTransforms[lineNbr() - 1].applyToPoint(new Vector(0.)).x();
+	}
+
+	//	@Override
+	public double height() {
+		update();
+		return columnTransforms[columnNbr() - 1].applyToPoint(new Vector(0.)).x();
 	}
 
 	@Override
-	public double height() {
-		update();
-		return columnTransforms[columnNbr()-1].applyToPoint(new Vector(0.)).x();
+	public void wasDimensionned(UIObject child, Vector newDimension) {
+		if (child == background) {
+			backgroundUpToDate = false;
+			upToDate = false;
+			return;
+		}
+		for (int i = 0; i < lineNbr(); i++) {
+			for (int j = 0; j < columnNbr(); ++j) {
+				if (get(i, j) == child) {
+					lineUpToData[i] = false;
+					columnUpToData[j] = false;
+					upToDate = false;
+				}
+			}
+		}
+	}
+
+	@Override
+	public Vector getDimension() {
+		return new Vector(width(), height());
+	}
+
+	@Override
+	public void setDimension(Vector dimension) {
+		// TODO
 	}
 }

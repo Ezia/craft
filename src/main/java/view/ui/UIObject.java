@@ -1,24 +1,41 @@
 package view.ui;
 
+import util.math.Matrix;
 import util.math.Transform;
+import util.math.Vector;
 import util.shape.Rectangle;
+
+import java.util.stream.DoubleStream;
 
 /**
  * Created by esia on 13/07/17.
  */
 public interface UIObject {
 
-	public abstract double width();
+	void setParent(UIContainer parent, Transform transform);
 
-	public abstract double height();
+	UIContainer getParent();
 
-	public abstract Rectangle getLocalBoundingBox();
+	Matrix getTransformGlobalMatrix();
 
-	public UIContainer getParent();
+	// Dimension
 
-	public void setParent(UIContainer parent);
+	Vector getDimension();
 
-	public Transform getTransform();
+	boolean isProportionnal();
 
-	public Rectangle getGlobalBoundingBox();
+	default double getProportion() {
+		Vector dim = getDimension();
+		return dim.x()/dim.y();
+	}
+
+	void setDimension(Vector dimension);
+
+	default Vector getMinDimension() {
+		return new Vector(0., 0.);
+	}
+
+	default Vector getMaxDimension() {
+		return new Vector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+	}
 }

@@ -20,6 +20,7 @@ public class LwjglTable extends LwjglElement {
 	@Override
 	public void draw(LwjglWindow window) {
 		getUITable().update();
+		getUITable().getBackground().draw(window);
 		for (int i = 0; i < getUITable().lineNbr(); ++i)  {
 			for (int j = 0; j < getUITable().columnNbr(); ++j)  {
 				if (getUITable().get(i, j) != null) {

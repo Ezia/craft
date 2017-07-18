@@ -205,6 +205,14 @@ public class Vector {
 		return result;
 	}
 
+	public Vector inv() {
+		Vector result = new Vector(this.size());
+		for (int i = 0; i < this.size(); i++) {
+			result.values[i] = 1./this.values[i];
+		}
+		return result;
+	}
+
 	public Vector capMax(Vector cap) {
 		Vector result = new Vector(equal(notNull(cap).size(), this.size()));
 		for (int i = 0; i < this.size(); i++) {
