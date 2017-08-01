@@ -40,19 +40,21 @@ public class Main {
                 new LwjglUniformColorPolygon(
                         new Rectangle(new Vector(0., 0.), new Vector(300., 300.)),
                         new Color(Color.Type.RGBA, new Vector(1., 0.5, 0., 1.))
-				)
+                )
         );
+
 
         LwjglDrawing draw2 = new LwjglDrawing(
                 true,
-                new LwjglUniformColorPolygon(
-                        new Rectangle(new Vector(0., 0.), new Vector(400., 200.)),
-                        new Color(Color.Type.RGBA, new Vector(1., 0., 0.5, 0.5))
-                )
-//                new LwjglUniformTexturePolygon(
-//                        new Rectangle(new Vector(0., 0.), new Vector(300., 400.)),
-//                        new AWTImage("src/main/resources/test_photo.jpg")
+//                new LwjglUniformColorPolygon(
+//                        new Rectangle(new Vector(0., 0.), new Vector(400., 200.)),
+//                        new Color(Color.Type.RGBA, new Vector(1., 0., 0.5, 0.5))
 //                )
+                new LwjglUniformTexturePolygon(
+                        new Rectangle(new Vector(0., 0.), new Vector(300., 400.)),
+                        new AWTImage("src/main/resources/test_photo.jpg"),
+                        new Rectangle(new Vector(50., 50.), new Vector(200., 250.))
+                )
         );
 
 
@@ -62,7 +64,7 @@ public class Main {
         tab.getUITable().setBackground(draw1);
 
         draw2.setDimension(new Vector(150., 150.));
-        draw1.getUIDrawing().setDimension(new Vector(10., 10.));
+//        draw1.getUIDrawing().setDimension(new Vector(400., 400.));
 
         LwjglWindow win = new LwjglWindow(windowBox , "Craft");
 

@@ -9,15 +9,15 @@ import view.ui.drawable.UIDrawable;
 /**
  * Created by esia on 16/07/17.
  */
-public abstract class LwjglDrawable<T extends UIDrawable> implements UIDrawable {
+public abstract class LwjglDrawable implements UIDrawable {
 
-	protected final T drawable;
+	protected final UIDrawable drawable;
 
-	public LwjglDrawable(T drawable) {
+	public LwjglDrawable(UIDrawable drawable) {
 		this.drawable = drawable;
 	}
 
-	public T getDrawable() {
+	public UIDrawable getDrawable() {
 		return drawable;
 	}
 

@@ -18,7 +18,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.*;
 
-public class LwjglUniformTexturePolygon extends LwjglDrawable<UIUniformTexturePolygon> {
+public class LwjglUniformTexturePolygon extends LwjglDrawable {
 
 	protected LwjglTexture2D texture = null;
 	protected LwjglVertexBuffer vertexPositionBuffer = null;
@@ -36,10 +36,14 @@ public class LwjglUniformTexturePolygon extends LwjglDrawable<UIUniformTexturePo
 		super(new UIUniformTexturePolygon(polygon, image, textureBox));
 	}
 
+	public UIUniformTexturePolygon getUIUniformTexturePolygon() {
+		return (UIUniformTexturePolygon)this.drawable;
+	}
+
 	private void update(LwjglProgram program) {
 		if (!upToDate) {
 			try {
-				PolygonalChain chain = drawable.getShape().getTriangleChain();
+				PolygonalChain chain = this.getUIUniformTexturePolygon().getShape().getTriangleChain();
 
 				this.vertexPositionBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
 				float[] positions = chain.getFloatPointArray();
@@ -50,11 +54,11 @@ public class LwjglUniformTexturePolygon extends LwjglDrawable<UIUniformTexturePo
 				this.indexBuffer.set(indices);
 				indexNbr = indices.length;
 
-				if (!drawable.getTexture().isLoaded()) {
-					drawable.getTexture().load();
+				if (!this.getUIUniformTexturePolygon().getTexture().isLoaded()) {
+					this.getUIUniformTexturePolygon().getTexture().load();
 				}
 				this.texture = new LwjglTexture2D();
-				this.texture.set(drawable.getTexture());
+				this.texture.set(this.getUIUniformTexturePolygon().getTexture());
 
 				vertexArray = new LwjglVertexArray();
 				vertexArray.bind();
@@ -91,7 +95,7 @@ public class LwjglUniformTexturePolygon extends LwjglDrawable<UIUniformTexturePo
 		glUniformMatrix3fv(model, false, transform.getFloatColumnArray());
 
 		int texProj = glGetUniformLocation(program.get(), "texCoordProj");
-		glUniformMatrix3fv(texProj, false, drawable.getUvMatrix().getFloatColumnArray());
+		glUniformMatrix3fv(texProj, false, this.getUIUniformTexturePolygon().getUvMatrix().getFloatColumnArray());
 
 		glDrawElements(GL_TRIANGLE_STRIP,
 				indexNbr,

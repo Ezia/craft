@@ -1,6 +1,8 @@
 package view.lwjglUi.ui.container;
 
 import view.lwjglUi.ui.LwjglElement;
+import view.lwjglUi.ui.drawable.LwjglDrawable;
+import view.lwjglUi.ui.element.LwjglDrawing;
 import view.lwjglUi.ui.topObjects.LwjglWindow;
 import view.ui.container.UITable;
 

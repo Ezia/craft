@@ -7,6 +7,8 @@ import util.math.Vector;
 import util.shape.Rectangle;
 import view.ui.UIContainer;
 import view.ui.UIObject;
+import view.ui.drawable.UIDrawable;
+import view.ui.element.UIDrawing;
 
 import java.util.Arrays;
 
@@ -30,8 +32,6 @@ public class UITable<T extends UIObject> extends UIContainer {
 
 	public UITable(int lineNbr, int columnNbr) {
 		super(false);
-
-//		assert (lineNbr > 0 && columnNbr > 0);
 
 		background = null;
 		tableTransform = new Transform(2, 2, this.transform);
@@ -101,8 +101,8 @@ public class UITable<T extends UIObject> extends UIContainer {
 		if (background != null) {
 			background.setParent(null, null);
 		}
-		value.setParent(this, backgroundTransform);
 		background = value;
+		background.setParent(this, backgroundTransform);
 	}
 
 	public T get(int l, int c) {
@@ -267,6 +267,19 @@ public class UITable<T extends UIObject> extends UIContainer {
 
 	@Override
 	public void setDimension(Vector dimension) {
-		// TODO
+//		update();
+//		if (dimension.x() < width()) {
+//			boolean resized = true;
+//			double remainingReduction = width() - dimension.x();
+//			while (resized) {
+//				for (int i = 0; i < columnNbr(); ++i) {
+//					for (int j = 0; j < lineNbr(); ++j) {
+//					}
+//				}
+//			}
+//		}
+//		if (dimension.y() < height()) {
+//
+//		}
 	}
 }

@@ -1,10 +1,20 @@
 package view.ui;
 
+/**
+ *
+ * parent : lié à l'enfant
+ * ne peut pas redimensionner l'enfant
+ * peut le déplacer
+ * enfant : redimensionnable (proportionnel)
+ * déplaçable
+ */
 
 import util.math.Matrix;
 import util.math.Transform;
 import util.math.Vector;
 import util.shape.Rectangle;
+
+import java.util.TreeMap;
 
 /**
  *
@@ -13,6 +23,8 @@ import util.shape.Rectangle;
 public abstract class UIElement  implements UIObject {
 
 	private UIContainer parent = null;
+
+	private TreeMap<Transform, Transform> parents = null;
 
 	protected final Transform transform = new Transform(2, 2);
 

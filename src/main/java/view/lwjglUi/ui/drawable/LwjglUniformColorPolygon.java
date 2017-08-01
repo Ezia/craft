@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL20.*;
 
-public class LwjglUniformColorPolygon extends LwjglDrawable<UIUniformColorPolygon> {
+public class LwjglUniformColorPolygon extends LwjglDrawable {
 
 	private LwjglVertexBuffer vertexPositionBuffer = null;
 	private LwjglIndexBuffer indexBuffer = null;
@@ -29,10 +29,14 @@ public class LwjglUniformColorPolygon extends LwjglDrawable<UIUniformColorPolygo
 		super(new UIUniformColorPolygon(polygon, color));
 	}
 
+	public UIUniformColorPolygon getUIUniformColorPolygon() {
+		return (UIUniformColorPolygon)this.drawable;
+	}
+
 	private void update(LwjglProgram program) {
 		if (!upToDate) {
 			try {
-				PolygonalChain chain = this.drawable.getShape().getTriangleChain();
+				PolygonalChain chain = this.getUIUniformColorPolygon().getShape().getTriangleChain();
 
 				// vertices positions
 				this.vertexPositionBuffer = new LwjglVertexBuffer(GL_STATIC_DRAW);
@@ -76,7 +80,7 @@ public class LwjglUniformColorPolygon extends LwjglDrawable<UIUniformColorPolygo
 		indexBuffer.bind();
 
 		int colorPos = glGetUniformLocation(program.get(), "color");
-		glUniform4fv(colorPos, this.drawable.getColor().vector().getFloatArray());
+		glUniform4fv(colorPos, this.getUIUniformColorPolygon().getColor().vector().getFloatArray());
 
 		int model = glGetUniformLocation(program.get(), "model");
 		glUniformMatrix3fv(model, false, transform.getFloatColumnArray());
